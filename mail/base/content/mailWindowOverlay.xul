@@ -972,7 +972,7 @@
               <menuitem id="newMailAccountMenuItem"
                         label="&newEmailAccountCmd.label;"
                         accesskey="&newEmailAccountCmd.accesskey;"
-                        oncommand="NewMailAccount(msgWindow);"/>
+                        oncommand="NewMailAccountProvisioner(msgWindow);"/>
               <menuitem id="newAccountMenuItem"
                         label="&newOtherAccountsCmd.label;"
                         accesskey="&newOtherAccountsCmd.accesskey;"

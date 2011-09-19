@@ -385,7 +385,7 @@ function AddMailAccount()
   let msgWindow = Components.classes["@mozilla.org/messenger/services/session;1"]
                             .getService(Components.interfaces.nsIMsgMailSession)
                             .topmostMsgWindow;
-  NewMailAccount(msgWindow);
+  NewMailAccountProvisioner(msgWindow);
 }
 
 function onSetDefault(event) {

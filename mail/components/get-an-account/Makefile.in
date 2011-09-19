@@ -1,0 +1,10 @@
+DEPTH     = ../../..
+topsrcdir = @top_srcdir@
+srcdir    = @srcdir@
+VPATH     = @srcdir@
+
+include $(DEPTH)/config/autoconf.mk
+
+# see ../about-support/Makefile.in for some useful stuff
+
+include $(topsrcdir)/config/rules.mk

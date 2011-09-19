@@ -311,7 +311,7 @@ const MailPrefObserver = {
 
 function AutoConfigWizard(okCallback)
 {
-  NewMailAccount(msgWindow, okCallback);
+  NewMailAccountProvisioner(msgWindow, okCallback);
 }
 
 /**

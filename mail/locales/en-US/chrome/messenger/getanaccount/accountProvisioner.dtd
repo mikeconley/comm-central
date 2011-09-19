@@ -1,0 +1,21 @@
+<!ENTITY window.title "Welcome to Thunderbird">
+<!ENTITY header.label "Want to create a new address for Thunderbird?">
+<!ENTITY error.line1 "Sorry we had no luck finding suggestions.">
+<!ENTITY error.line2 "You try can search for nicknames or any other term to find more emails">
+<!ENTITY error.suggest 'Also you might try one of the <a href="http://www.mozillamessaging.com/en-US/thunderbird/features/email_providers.html" class="external">free email account alternatives</a>.'>
+<!ENTITY success.title 'Hello <span id="FirstAndLastName"></span>, the following email addresses are available to you:'>
+<!ENTITY success.tip "(You can also search for nicknames or any other term to find more emails)">
+<!ENTITY partnership.description "In partnership with several providers, Thunderbird can offer you a new email account. Just fill in your first and last name, or any other words you’d like, in the fields above to get started.">
+<!ENTITY existing.header "Already have an address you want to use?">
+<!ENTITY tinyheader.title "Got an address?">
+<!ENTITY tinyheader.existing "Skip this and use my existing email">
+<!ENTITY content.close "I think I’ll configure my account later.">
+<!ENTITY successful.title "Congratulations!">
+<!ENTITY successful.successMessage "You have successfully set up your account.">
+<!ENTITY successful.write "Write some email">
+<!ENTITY successful.write.desc "Let your friends and family know about your new address.<br/> That’s why you got this new account, isn’t it?">
+<!ENTITY successful.customize "Customize Thunderbird with some cool add-ons">
+<!ENTITY successful.customize.desc "There are thousands of add-ons that let you customize Thunderbird to make it fit your specific needs.">
+<!ENTITY successful.attach "Attach a personal signature to my email">
+<!ENTITY successful.attach.desc "You can automatically attach a quote or some information about yourself to the end of every message you send.">
+<!ENTITY successful.close "Close this window.">
