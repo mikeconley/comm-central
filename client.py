@@ -25,7 +25,7 @@ DEFAULTS = {
   'VENKMAN_REPO': 'http://hg.mozilla.org/venkman/',
 
   # URL of the default hg repository to clone for Mozilla.
-  'MOZILLA_REPO': 'http://hg.mozilla.org/mozilla-central/',
+  'MOZILLA_REPO': 'git://github.com/doublec/mozilla-central.git',
 }
 
 REPO_SHORT_NAMES = {
@@ -302,6 +302,40 @@ def backup_cvs_extension(extensionName, extensionDir, extensionPath):
         sys.excepthook(sys.exc_info()[0], sys.exc_info()[1], None)
         sys.exit("Error: %s directory renaming failed!" % extensionName)
 
+def do_git_pull(dir, repository, git, rev):
+    """Clone if the dir doesn't exist, pull if it does.
+    """
+
+    fulldir = os.path.join(topsrcdir, dir)
+
+    hgcloneopts = []
+    if options.hgcloneopts:
+        hgcloneopts = options.hgcloneopts.split()
+
+    hgopts = []
+    if options.hgopts:
+        hgopts = options.hgopts.split()
+
+    if not os.path.exists(fulldir):
+        fulldir = os.path.join(topsrcdir, dir)
+        check_call_noisy([git, 'clone'] + hgcloneopts + hgopts + [repository, fulldir],
+                         retryMax=options.retries)
+    else:
+        cmd = [git, 'pull'] + hgopts
+        if repository is not None:
+            cmd.append(repository)
+        check_call_noisy(cmd, retryMax=options.retries)
+
+    if options.tinderbox_print and dir != '.':
+        got_rev = check_call_output([hg, 'parent', '-R', fulldir,
+                    '--template={node|short}'])
+
+        url = check_call_output([hg, 'paths', 'default', '-R', fulldir ]).rstrip().rstrip('/')
+        repo_name = url.split('/')[-1]
+        repo_short_name = REPO_SHORT_NAMES.get(repo_name, repo_name)
+
+        print "TinderboxPrint:<a href=%s/rev/%s title='Built from %s revision %s'>%s:%s</a>"  % ( url, got_rev, repo_name, got_rev, repo_short_name, got_rev)
+
 def do_hg_pull(dir, repository, hg, rev):
     """Clone if the dir doesn't exist, pull if it does.
     """
@@ -447,6 +481,8 @@ o.add_option("--venkman-rev", dest = "venkman_rev",
              default = None,
              help = "Revision of Venkman repository to update to. Default: \"" + get_DEFAULT_tag('VENKMAN_REV') + "\"")
 
+o.add_option("--git", dest="git", default=os.environ.get('GIT', 'git'),
+             help="The location of the git binary")
 o.add_option("--hg", dest="hg", default=os.environ.get('HG', 'hg'),
              help="The location of the hg binary")
 o.add_option("-v", "--verbose", dest="verbose",
@@ -483,7 +519,7 @@ def fixup_comm_repo_options(options):
     """
 
     if options.comm_repo is None and \
-            not os.path.exists(os.path.join(topsrcdir, '.hg')):
+            not os.path.exists(os.path.join(topsrcdir, '.git')):
         o.print_help()
         print
         print "Error: the -m option is required for the initial checkout!"
@@ -600,7 +636,7 @@ if action in ('checkout', 'co'):
 
     if not options.skip_comm:
         fixup_comm_repo_options(options)
-        do_hg_pull('.', options.comm_repo, options.hg, options.comm_rev)
+        do_git_pull('.', options.comm_repo, options.git, options.comm_rev)
 
     if not options.skip_mozilla:
         if options.known_good and options.mozilla_rev is None:
@@ -609,7 +645,7 @@ if action in ('checkout', 'co'):
             print "Setting mozilla_rev to '%s'" % options.mozilla_rev
             
         fixup_mozilla_repo_options(options)
-        do_hg_pull('mozilla', options.mozilla_repo, options.hg, options.mozilla_rev)
+        do_git_pull('mozilla', options.mozilla_repo, options.git, options.mozilla_rev)
 
     # Check whether destination directory exists for these extensions.
     if (not options.skip_chatzilla or not options.skip_inspector or \
