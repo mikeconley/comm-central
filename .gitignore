@@ -1,0 +1,6 @@
+.mozconfig.mk
+.mozconfig.out
+.treestate
+configure
+ldap/sdks/
+mozilla/
