@@ -157,14 +157,6 @@ input[type="submit"].search {
   background-repeat: no-repeat;
 }
 
-/* for Gecko < 2.0 */
-label.placeholder {
-  cursor: text;
-  padding: 8px;
-  color: #999;
-  font-size: larger;
-}
-
 /* move over for the search image */
 #FirstName_placeholder {
   padding-left: 25px;

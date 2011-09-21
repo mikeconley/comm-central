@@ -167,13 +167,35 @@ $(function() {
   let checkAddress = prefs.getCharPref("getanaccount.checkAddress");
   let logUrl = prefs.getCharPref("getanaccount.logUrl");
 
+  let commentary = $(".commentary")
+    .append($("<span>"+stringBundle.get("disclaimer")+"</span>"));
+  let placeholder = commentary.find(".placeholder");
   $.getJSON(providerList, function(data) {
     providers = {};
     for each (let [i, provider] in Iterator(data)) {
       providers[provider.id] = provider;
       // Update the terms of service and privacy policy links.
-      $("a.tos." + provider.id).attr("href", provider.tos_url);
-      $("a.privacy." + provider.id).attr("href", provider.privacy_url);
+      let sep = "";
+      if (i == data.length - 1)
+        ;
+      else if (i == data.length - 2)
+        sep = stringBundle.get("sepAnd");
+      else
+        sep = stringBundle.get("sepComma");
+      placeholder
+        .append($("<span />").text(provider.label + " ("))
+        .append($("<a />")
+          .attr("href", provider.privacy_url)
+          .text(stringBundle.get("privacyPolicy"))
+          .addClass("privacy").addClass("external").addClass(provider.id)
+        )
+        .append($("<span />").text(", "))
+        .append($("<a />")
+          .attr("href", provider.tos_url)
+          .text(stringBundle.get("tos"))
+          .addClass("tos").addClass("external").addClass(provider.id)
+        )
+        .append($("<span />").text(")"+sep));
     };
   });
   let firstname = storage.getItem("firstname") || $("#FirstName").text();

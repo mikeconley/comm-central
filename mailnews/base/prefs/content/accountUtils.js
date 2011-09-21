@@ -358,7 +358,8 @@ function NewMailAccountProvisioner(aMsgWindow, args) {
   window.openDialog(
     "chrome://messenger/content/getanaccount/accountProvisioner.xhtml",
     "AccountSetup",
-    "chrome,titlebar,modal,centerscreen,width=640,height=480",
+    // disabling modal for the time being, see 688273
+    "chrome,titlebar,centerscreen,width=640,height=480",
     args);
 }
 /**
