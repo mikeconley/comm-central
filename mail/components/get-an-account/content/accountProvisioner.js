@@ -21,6 +21,7 @@
  * Contributor(s):
  * Blake Winton <bwinton@mozillamessaging.com>
  * Bryan Clark <clarkbw@mozillamessaging.com>
+ * Jonathan Protzenko <jprotzenko@mozilla.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -40,7 +41,9 @@ let Cu = Components.utils;
 let Cc = Components.classes;
 let Ci = Components.interfaces;
 
+Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource:///modules/StringBundle.js");
+
 let stringBundle = new StringBundle("chrome://messenger/locale/getanaccount/accountProvisioner.properties");
 
 /**
@@ -54,14 +57,12 @@ let stringBundle = new StringBundle("chrome://messenger/locale/getanaccount/acco
  */
 function getLocalStorage(page) {
   var url = "http://example.com/" + page;
-  var ios = Cc["@mozilla.org/network/io-service;1"]
-    .getService(Ci.nsIIOService);
   var ssm = Cc["@mozilla.org/scriptsecuritymanager;1"]
     .getService(Ci.nsIScriptSecurityManager);
   var dsm = Cc["@mozilla.org/dom/storagemanager;1"]
     .getService(Ci.nsIDOMStorageManager);
 
-  var uri = ios.newURI(url, "", null);
+  var uri = Services.io.newURI(url, "", null);
   var principal = ssm.getCodebasePrincipal(uri);
   return dsm.getLocalStorageForPrincipal(principal, url);
 }
@@ -152,18 +153,15 @@ $(function() {
 
   actionList.push("Starting");
   window.storage = getLocalStorage("accountProvisioner");
-  var ioService = Cc["@mozilla.org/network/io-service;1"]
-                            .getService(Ci.nsIIOService);
   let opener = Cc["@mozilla.org/uriloader/external-protocol-service;1"]
                          .getService(Ci.nsIExternalProtocolService);
 
   $(".external").click(function (e) {
     e.preventDefault();
-    opener.loadUrl(ioService.newURI($(e.target).attr("href"), "UTF-8", null));
+    opener.loadUrl(Services.io.newURI($(e.target).attr("href"), "UTF-8", null));
   });
 
-  let prefs = Cc["@mozilla.org/preferences-service;1"]
-                .getService(Ci.nsIPrefBranch);
+  let prefs = Services.prefs;
   let providerList = prefs.getCharPref("getanaccount.providerList");
   let suggestFromName = prefs.getCharPref("getanaccount.suggestFromName");
   let checkAddress = prefs.getCharPref("getanaccount.checkAddress");
@@ -384,12 +382,9 @@ $(function() {
 
   $("#success-signature").click(function() {
     actionList.push("Signature");
-    var windowManager =
-      Cc["@mozilla.org/appshell/window-mediator;1"]
-                .getService(Ci.nsIWindowMediator);
 
     var existingAccountManager =
-      windowManager.getMostRecentWindow("mailnews:accountmanager");
+      Services.wm.getMostRecentWindow("mailnews:accountmanager");
 
     if (existingAccountManager)
       existingAccountManager.focus();
