@@ -156,7 +156,7 @@ $(function() {
   let opener = Cc["@mozilla.org/uriloader/external-protocol-service;1"]
                          .getService(Ci.nsIExternalProtocolService);
 
-  $(".external").click(function (e) {
+  $(".external").live("click", function (e) {
     e.preventDefault();
     opener.loadUrl(Services.io.newURI($(e.target).attr("href"), "UTF-8", null));
   });
