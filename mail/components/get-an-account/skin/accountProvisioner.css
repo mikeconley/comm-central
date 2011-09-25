@@ -223,6 +223,10 @@ input[type="submit"].search {
   border-bottom: 1px solid #ccc;
 }
 
+#results :-moz-any(div.address, div.more) {
+  cursor: pointer;
+}
+
 #results .row:last-child {
   border-bottom: none;
 }

@@ -369,16 +369,24 @@ $(function() {
     window.close();
   });
 
-  $("#results").delegate("div.more", "click", function() {
-    // Hide the other boxes.
+  // The code is smart enough to work for both selectors.
+  $("#results").delegate("div.more, div.address", "click", function() {
     let self = $(this);
+
+    // Return if we're already expanded
+    if (self.parent().parent().hasClass("expanded"))
+      return;
+    self.parent().parent().siblings().removeClass("expanded");
+    self.parent().parent().addClass("expanded");
+
+    // Hide the other boxes.
     self.parent().parent().siblings().children(".extra").slideUp();
     self.parent().parent().siblings().find(".more").show();
     self.parent().parent().siblings().find(".pricing").fadeOut("fast");
     self.parent().parent().siblings().find(".price").fadeIn("fast");
 
     // And show this box.
-    self.hide();
+    self.parent().parent().find(".more").hide();
     self.parent().siblings(".extra").slideDown();
     self.parent().parent().children().find(".pricing").fadeIn("fast");
     self.parent().siblings().find(".price").fadeOut("fast");
