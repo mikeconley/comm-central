@@ -1325,6 +1325,19 @@ EmailConfigWizard.prototype =
   },
 
   /**
+   * [Back to previous] button click handler. Always active, allows one to go
+   * back to the account provisioner screen.
+   */
+  onBackToProvisioner : function ()
+  {
+    this._okCallback = null;
+    // Oddly enough, the same window is re-used, so resize the window to the
+    // size the account provisioner expects as its initial state...
+    window.resizeTo(640, 480);
+    NewMailAccountProvisioner(window.arguments[0].msgWindow, window.arguments[0].extraData)
+  },
+
+  /**
    * [Advanced Setup...] button click handler
    * Only active in manual edit mode, and goes straight into
    * Account Settings (pref UI) dialog. Requires a backend account,

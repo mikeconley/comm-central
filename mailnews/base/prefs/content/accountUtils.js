@@ -358,7 +358,7 @@ function NewMailAccountProvisioner(aMsgWindow, args) {
   window.openDialog(
     "chrome://messenger/content/getanaccount/accountProvisioner.xhtml",
     "AccountSetup",
-    // disabling modal for the time being, see 688273
+    // disabling modal for the time being, see 688273 REMOVEME
     "chrome,titlebar,centerscreen,width=640,height=480",
     args);
 }
@@ -383,8 +383,9 @@ function msgNewMailAccount(msgWindow, okCallback, extraData)
   if (existingWindow)
     existingWindow.focus();
   else
+    // disabling modal for the time being, see 688273 REMOVEME
     window.openDialog("chrome://messenger/content/accountcreation/emailWizard.xul",
-                      "AccountSetup", "chrome,titlebar,modal,centerscreen",
+                      "AccountSetup", "chrome,titlebar,centerscreen",
                       {msgWindow:msgWindow,
                        okCallback:okCallback,
                        extraData:extraData});
