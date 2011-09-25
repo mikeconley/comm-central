@@ -44,8 +44,7 @@
 
 body {
   font-family: sans-serif;
-  background-image: url("chrome://messenger/content/getanaccount/bg.png");
-  background-repeat: no-repeat;
+  background-color: -moz-dialog;
 }
 
 input[type="submit"]::-moz-focus-inner,
@@ -82,7 +81,6 @@ button:active {
 
 #window {
   padding: 10px;
-  background-image: -moz-linear-gradient(center top , rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 100%);
   width: 100%;
 }
 
@@ -114,7 +112,7 @@ button:active {
 
 #content,
 #existing {
-  background-color: rgba(255,255,255,0.6);
+  background-color: rgba(255,255,255,0.9);
   -moz-border-radius: 5px;
   -moz-box-shadow: 0 0 2px rgba(0,0,0,0.75) inset;
   margin-bottom: 10px;
@@ -287,7 +285,6 @@ input[type="submit"].search {
   color: graytext;
   font-weight: bold;
   text-align: center;
-  background-image: -moz-linear-gradient(bottom, #fff 30%, rgba(255,255,255,0.2) 100%);
 }
 
 #existing .header {
