@@ -42,6 +42,8 @@ let Cc = Components.classes;
 let Ci = Components.interfaces;
 
 Cu.import("resource://gre/modules/Services.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://gre/modules/NetUtil.jsm");
 Cu.import("resource:///modules/StringBundle.js");
 
 let stringBundle = new StringBundle("chrome://messenger/locale/getanaccount/accountProvisioner.properties");
@@ -365,8 +367,19 @@ $(function() {
     }
 
     // Then open a content tab.
-    openContentTab(url);
-    window.close();
+    let mail3Pane = Cc["@mozilla.org/appshell/window-mediator;1"]
+          .getService(Ci.nsIWindowMediator)
+          .getMostRecentWindow("mail:3pane");
+    let tabmail = mail3Pane.document.getElementById("tabmail");
+    tabmail.openTab("contentTab", {
+      contentPage: url,
+      onLoad: function (event, aBrowser) {
+        dump("\033[01;36monLoad "+mail3Pane.AccountProvisionerListener+"\033[00m\n");
+        aBrowser.webProgress.addProgressListener(
+          mail3Pane.AccountProvisionerListener, Ci.nsIWebProgress.NOTIFY_ALL);
+        window.close();
+      },
+    });
   });
 
   // The code is smart enough to work for both selectors.
