@@ -214,10 +214,24 @@ $(function() {
   }).click(function() {
     expandSection(false);
   });
-  $("#existing").focusin(function() {
-    expandSection(true);
-  }).click(function() {
-    expandSection(true);
+
+  $("button.existing").click(function() {
+    actionList.push("Using Existing");
+    saveState();
+    NewMailAccount(msgWindow, okCallback, window.arguments[0]);
+    // Set the callback to null, so that we don't call it.
+    okCallback = null;
+    window.close();
+  });
+
+  $("#existing").focusin(function(event) {
+    // Don't expand the section if the click originates from the button
+    // (otherwise the button moves from under the cursor).
+    if (!$(event.target).hasClass("existing"))
+      expandSection(true);
+  }).click(function(event) {
+    if (!$(event.target).hasClass("existing"))
+      expandSection(true);
   });
 
   $(".tinyheader .title").fadeOut(0, function() {
@@ -417,15 +431,6 @@ $(function() {
   });
 
   $("button.close").click(function() {
-    window.close();
-  });
-
-  $("button.existing").click(function() {
-    actionList.push("Using Existing");
-    saveState();
-    NewMailAccount(msgWindow, okCallback, window.arguments[0]);
-    // Set the callback to null, so that we don't call it.
-    okCallback = null;
     window.close();
   });
 });
