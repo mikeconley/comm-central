@@ -267,7 +267,7 @@ $(function() {
   }).trigger("keydown");
 
   $(".search").click(function() {
-    $(".search").attr("disabled", true);
+    $(".search").attr("disabled", "disabled");
     actionList.push("Searching");
     $("#notifications").children().hide();
     saveState();
@@ -275,12 +275,12 @@ $(function() {
     var lastname = $("#LastName").val();
     if (firstname.length <= 0) {
       $("#FirstName").select().focus();
-      $(".search").attr("disabled", false);
+      $(".search").removeAttr("disabled");
       return;
     }
     if (lastname.length <= 0) {
       $("#LastName").select().focus();
-      $(".search").attr("disabled", false);
+      $(".search").removeAttr("disabled");
       return;
     }
     $("#notifications .spinner").show();
@@ -288,7 +288,7 @@ $(function() {
               {"first_name": firstname, "last_name": lastname},
               function(data) {
       let results = $("#results").empty();
-      $(".search").attr("disabled", false);
+      $(".search").removeAttr("disabled");
       let searchingFailed = true;
 
       if (data && data.length) {
