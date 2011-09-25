@@ -137,7 +137,7 @@ input[type="text"], input[type="password"], textarea {
 
 #search input[type="text"] {
   margin-right: 10px;
-  padding: 8px;
+  padding: 0 8px;
 }
 
 input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
