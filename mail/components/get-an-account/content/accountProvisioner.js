@@ -374,7 +374,6 @@ $(function() {
     tabmail.openTab("contentTab", {
       contentPage: url,
       onLoad: function (event, aBrowser) {
-        dump("\033[01;36monLoad "+mail3Pane.AccountProvisionerListener+"\033[00m\n");
         aBrowser.webProgress.addProgressListener(
           mail3Pane.AccountProvisionerListener, Ci.nsIWebProgress.NOTIFY_ALL);
         window.close();
