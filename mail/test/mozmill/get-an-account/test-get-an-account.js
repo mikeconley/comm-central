@@ -81,9 +81,15 @@ function get_provisioner_window() {
 }
 
 function wait_for_provisioner_window() {
-  let r = null;
-  mc.waitFor(function () (r = get_provisioner_window(), r != null));
-  return r;
+  let w = null;
+  mc.waitFor(function () (w = get_provisioner_window(), w != null));
+  mc.waitFor(function () {
+    let docShell = w.QueryInterface(Ci.nsIInterfaceRequestor)
+        .getInterface(Ci.nsIWebNavigation)
+        .QueryInterface(Ci.nsIDocShell);
+    return docShell.busyFlags == Ci.nsIDocShell.BUSY_FLAGS_NONE;
+  });
+  return w;
 }
 
 function open_provisioner_window() {
@@ -94,13 +100,6 @@ function test_get_an_account() {
   open_provisioner_window();
   // This just finds the window
   let w = wait_for_provisioner_window();
-  // Now we need to wait for it to be loaded...
-  mc.waitFor(function () {
-    let docShell = w.QueryInterface(Ci.nsIInterfaceRequestor)
-        .getInterface(Ci.nsIWebNavigation)
-        .QueryInterface(Ci.nsIDocShell);
-    return docShell.busyFlags == Ci.nsIDocShell.BUSY_FLAGS_NONE;
-  });
 
   // Fill in some data
   let $ = w.$;
@@ -129,7 +128,10 @@ function test_get_an_account() {
   let btn = tab.browser.contentWindow.document.querySelector("input[value=Send]");
   mc.click(new elib.Elem(btn));
   mc.waitFor(function() nAccounts() == i + 1);
-  mc.sleep(2000);
+
+  // Re-get the new window
+  w = wait_for_provisioner_window();
+  $ = w.$;
 
   // W00t account created
   dump("\033[01;36m#winning\033[00m\n");

@@ -114,6 +114,9 @@ AccountProvisionerListener.prototype = {
               this.params.realName,
               this.params.email);
             accountCreationFuncs.createAccountInBackend(accountConfig);
+            NewMailAccountProvisioner(null, {
+              success: true,
+            });
           } catch (e) {
             dump(e+"\n");
             dump(e.stack+"\n");

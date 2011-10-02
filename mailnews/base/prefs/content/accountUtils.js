@@ -355,6 +355,9 @@ function NewMailAccountProvisioner(aMsgWindow, args) {
   if (!args.okCallback)
     args.okCallback = null;
 
+  if (!args.success)
+    args.success = false;
+
   window.openDialog(
     "chrome://messenger/content/getanaccount/accountProvisioner.xhtml",
     "AccountSetup",

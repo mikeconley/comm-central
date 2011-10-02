@@ -435,9 +435,14 @@ $(function() {
     } } );
   });
 
+  if (window.arguments[0].success) {
+    $("#window").hide();
+    $("#successful_account").show();
+  }
+
   $("#success-compose").click(function() {
     actionList.push("Compose");
-    NewComposeMessage();
+    NewComposeMessage(Components.interfaces.nsIMsgCompType.New);
     window.close();
   });
 
