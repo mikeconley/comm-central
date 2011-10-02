@@ -64,21 +64,30 @@ Services.scriptloader.loadSubScript("chrome://messenger/content/accountcreation/
 Services.scriptloader.loadSubScript("chrome://messenger/content/accountcreation/createInBackend.js", accountCreationFuncs);
 Services.scriptloader.loadSubScript("chrome://messenger/content/accountcreation/MyBadCertHandler.js", accountCreationFuncs);
 
-var AccountProvisionerListener = {
+/**
+ * This is a listener that will take care of intercepting the right request and
+ * creating the account accordingly.
+ *
+ * @param aBrowser The XUL <browser> the request lives in.
+ * @param aParams An object containing various bits of information.
+ * @param aParams.realName The real name of the person
+ * @param aParams.email The email address the person picked.
+ */
+function AccountProvisionerListener (aBrowser, aParams) {
+  this.browser = aBrowser;
+  this.params = aParams;
+}
+
+AccountProvisionerListener.prototype = {
   onStateChange: function (/* in nsIWebProgress */ aWebProgress,
                            /* in nsIRequest */ aRequest,
                            /* in unsigned long */ aStateFlags,
                            /* in nsresult */ aStatus) {
-    if ((aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) &&
+    // This is the earliest notification we get...
+    if ((aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_TRANSFERRING) &&
         (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_REQUEST)) {
       let channel = aRequest.QueryInterface(Ci.nsIHttpChannel);
       let contentType = channel.getResponseHeader("Content-Type");
-      dump("\033[01;36m"+contentType
-        +" "+(aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_REQUEST)
-        +" "+(aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_DOCUMENT)
-        +" "+(aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_NETWORK)
-        +" "+(aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW)
-        +"\033[00m\n");
       if (contentType == "text/xml") {
         aRequest.cancel(Cr.NS_BINDING_ABORTED);
         aRequest.QueryInterface(Ci.nsIChannel);
@@ -89,7 +98,11 @@ var AccountProvisionerListener = {
         try {
           let xml = new XML(str);
           let accountConfig = accountCreationFuncs.readFromXML(xml);
+          accountCreationFuncs.replaceVariables(accountConfig,
+            this.params.realName,
+            this.params.email);
           accountCreationFuncs.createAccountInBackend(accountConfig);
+          dump("Almost created the account!\n");
         } catch (e) {
           dump(e+"\n");
           dump(e.stack+"\n");

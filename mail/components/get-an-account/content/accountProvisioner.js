@@ -354,9 +354,12 @@ $(function() {
 
     // Replace the variables in the url.
     let url = provider.api;
-    url = url.replace("{firstname}", $("#FirstName").val());
-    url = url.replace("{lastname}", $("#LastName").val());
-    url = url.replace("{email}", $(this).attr("address"));
+    let firstName = $("#FirstName").val();
+    let lastName = $("#LastName").val();
+    let email = $(this).attr("address");
+    url = url.replace("{firstname}", firstName);
+    url = url.replace("{lastname}", lastName);
+    url = url.replace("{email}", email);
 
     // And add the extra data.
     let data = storedData[provider.id];
@@ -374,8 +377,13 @@ $(function() {
     tabmail.openTab("contentTab", {
       contentPage: url,
       onLoad: function (event, aBrowser) {
+        let progressListener = new mail3Pane.AccountProvisionerListener(
+          aBrowser, {
+            realName: firstName + " " + lastName,
+            email: email,
+          });
         aBrowser.webProgress.addProgressListener(
-          mail3Pane.AccountProvisionerListener, Ci.nsIWebProgress.NOTIFY_ALL);
+          progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
         window.close();
       },
     });
