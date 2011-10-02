@@ -127,11 +127,11 @@ function test_get_an_account() {
   // Click the button
   let btn = tab.browser.contentWindow.document.querySelector("input[value=Send]");
   mc.click(new elib.Elem(btn));
-  mc.waitFor(function() nAccounts() == i + 1);
 
   // Re-get the new window
   w = wait_for_provisioner_window();
   $ = w.$;
+  assert_equals(nAccounts(), i + 1);
 
   // W00t account created
   dump("\033[01;36m#winning\033[00m\n");
