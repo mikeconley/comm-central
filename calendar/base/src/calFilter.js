@@ -82,12 +82,14 @@ calFilter.prototype = {
     mEndDate: null,
     mTextFilterField: null,
     mPropertyFilter: filterAll,
+    mSelectedDate: null,
 
     // a number of prefined Filters for properties
     mPropertyFilterBag: { 
         all: filterAll,
         notstarted: function cF_filterNotStarted(item) {
-            return (percentCompleted(item) <= 0);
+            return !item.isCompleted &&
+                   (percentCompleted(item) <= 0);
         },
         overdue: function cF_filterOverdue(item) {
             // in case the item has no due date
@@ -95,14 +97,14 @@ calFilter.prototype = {
             if (item.dueDate == null) {
                 return false;
             }
-            return (percentCompleted(item) < 100) &&
-            !(item.dueDate.compare(now()) > 0);
+            return !item.isCompleted &&
+                   !(item.dueDate.compare(now()) > 0);
         },
-        open: function cF_filterCompleted(item) {
-            return (percentCompleted(item) < 100);
+        open: function cF_filterOpen(item) {
+            return !item.isCompleted;
         },
         completed: function cF_filterCompleted(item) {
-            return (percentCompleted(item) >= 100);
+            return item.isCompleted;
         },
         repeating: function cF_filterRepeating(item) {
             return (item.recurrenceInfo != null);
@@ -133,7 +135,7 @@ calFilter.prototype = {
 
     set endDate(aEndDate) {
         return (this.mEndDate = aEndDate);
-    },    
+    },
 
     set textFilterField(aId) {
         return (this.mTextFilterField = aId);
@@ -141,6 +143,14 @@ calFilter.prototype = {
 
     get textFilterField() {
         return this.mTextFilterField;
+    },
+
+    get selectedDate() {
+        return this.mSelectedDate;
+    },
+
+    set selectedDate(aSelectedDate) {
+        return (this.mSelectedDate = aSelectedDate);
     },
 
     // checks if the item contains the text of mTextFilterField
@@ -187,7 +197,7 @@ calFilter.prototype = {
 
     // set's the startDate and the endDate by using getDatesForFilter 
     setDateFilter: function cF_setDateFilter(aFilter) {
-      var [startDate, endDate] = getDatesForFilter(aFilter);
+      var [startDate, endDate] = getDatesForFilter(aFilter, this.mSelectedDate);
       this.mStartDate = startDate;
       this.mEndDate = endDate;
       return [this.mStartdate, this.mEndDate];
@@ -205,18 +215,20 @@ calFilter.prototype = {
 };
 
 /**
- * @param aFilter a String describing the filter, it should met a regEx to call 
- *                duration from filter otherwise a costumized filter is called
+ * @param aFilter         a String describing the filter, it should met a regEx to call 
+ *                        duration from filter otherwise a costumized filter is called
+ * @param aSelectedDate   Optional - the selected date to use for filters that require it.
+ *                        The selected day of the current view will be used by default.
  * @return        [startDate, endDate]
  */
 
-function getDatesForFilter(aFilter) {
+function getDatesForFilter(aFilter, aSelectedDate) {
     let endDate = cal.createDateTime();
     let startDate = cal.createDateTime();
     let duration = cal.createDuration();
     let oneDay = cal.createDuration();
     oneDay.days = 1;
-    let selectedDate = currentView().selectedDay;
+    let selectedDate = aSelectedDate || currentView().selectedDay;
 
     let durFilterReg = /next|last\d+\D+$/
     if (durFilterReg.exec(aFilter)) {
