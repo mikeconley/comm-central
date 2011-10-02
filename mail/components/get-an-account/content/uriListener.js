@@ -89,8 +89,18 @@ AccountProvisionerListener.prototype = {
       let channel = aRequest.QueryInterface(Ci.nsIHttpChannel);
       let contentType = channel.getResponseHeader("Content-Type");
       if (contentType == "text/xml") {
+        // Stop the request so that the user doesn't see the XML, and close the
+        // content tab while we're at it.
         this.browser.stop();
-        aRequest.cancel(Cr.NS_BINDING_ABORTED);
+        let tabmail = window.document.getElementById("tabmail");
+        let myTabInfo = tabmail.tabInfo
+          .filter((function (x) x.browser == this.browser).bind(this))[0];
+        tabmail.closeTab(myTabInfo);
+
+        // Fire off a request to get the XML again, this time so that we can
+        // analyze it and get its contents. Don't ask about the setTimeout: it's
+        // just that without it, the tests break and the request never
+        // completes. Go figure.
         aRequest.QueryInterface(Ci.nsIChannel);
         window.setTimeout(function () {
           let url = aRequest.URI;

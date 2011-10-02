@@ -387,6 +387,9 @@ $(function() {
         window.close();
       },
     });
+    // Wait for the handler to close us.
+    $("#notifications").children().hide();
+    $("#notifications .spinner").show();
   });
 
   // The code is smart enough to work for both selectors.
