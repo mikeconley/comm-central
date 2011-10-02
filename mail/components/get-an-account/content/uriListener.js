@@ -89,10 +89,10 @@ AccountProvisionerListener.prototype = {
       let channel = aRequest.QueryInterface(Ci.nsIHttpChannel);
       let contentType = channel.getResponseHeader("Content-Type");
       if (contentType == "text/xml") {
+        this.browser.stop();
         aRequest.cancel(Cr.NS_BINDING_ABORTED);
         aRequest.QueryInterface(Ci.nsIChannel);
         window.setTimeout(function () {
-          dump("\033[01;36mXXXXXXXXXXXXXX\033[00m\n");
           let url = aRequest.URI;
           let newChannel = NetUtil.newChannel(url);
           let inputStream = newChannel.open(); // asyncOpen here?

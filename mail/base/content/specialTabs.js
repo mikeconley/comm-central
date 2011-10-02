@@ -423,6 +423,7 @@ var specialTabs = {
       if ("onLoad" in aArgs) {
         aTab.browser.addEventListener("load", function _contentTab_onLoad (event) {
           aArgs.onLoad(event, aTab.browser);
+          aTab.browser.removeEventListener("load", _contentTab_onLoad, true);
         }, true);
       }
 
@@ -952,6 +953,7 @@ var specialTabs = {
       if ("onLoad" in aArgs) {
         aTab.browser.addEventListener("load", function _chromeTab_onLoad (event) {
           aArgs.onLoad(event, aTab.browser);
+          aTab.browser.removeEventListener("load", _chromeTab_onLoad, true);
         }, true);
       }
 
