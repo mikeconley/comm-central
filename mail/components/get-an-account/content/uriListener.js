@@ -91,22 +91,24 @@ AccountProvisionerListener.prototype = {
       if (contentType == "text/xml") {
         aRequest.cancel(Cr.NS_BINDING_ABORTED);
         aRequest.QueryInterface(Ci.nsIChannel);
-        let url = aRequest.URI;
-        let newChannel = NetUtil.newChannel(url);
-        let inputStream = newChannel.open(); // asyncOpen here?
-        let str = NetUtil.readInputStreamToString(inputStream, inputStream.available());
-        try {
-          let xml = new XML(str);
-          let accountConfig = accountCreationFuncs.readFromXML(xml);
-          accountCreationFuncs.replaceVariables(accountConfig,
-            this.params.realName,
-            this.params.email);
-          accountCreationFuncs.createAccountInBackend(accountConfig);
-          dump("Almost created the account!\n");
-        } catch (e) {
-          dump(e+"\n");
-          dump(e.stack+"\n");
-        }
+        window.setTimeout(function () {
+          dump("\033[01;36mXXXXXXXXXXXXXX\033[00m\n");
+          let url = aRequest.URI;
+          let newChannel = NetUtil.newChannel(url);
+          let inputStream = newChannel.open(); // asyncOpen here?
+          let str = NetUtil.readInputStreamToString(inputStream, inputStream.available());
+          try {
+            let xml = new XML(str);
+            let accountConfig = accountCreationFuncs.readFromXML(xml);
+            accountCreationFuncs.replaceVariables(accountConfig,
+              this.params.realName,
+              this.params.email);
+            accountCreationFuncs.createAccountInBackend(accountConfig);
+          } catch (e) {
+            dump(e+"\n");
+            dump(e.stack+"\n");
+          }
+        }.bind(this), 0);
       }
     }
   },
