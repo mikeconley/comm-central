@@ -93,7 +93,7 @@ NS_IMETHODIMP nsMsgCompUtils::MsgGenerateMessageId(nsIMsgIdentity *identity,
   return NS_OK;
 }
 
-NS_IMETHODIMP nsMsgCompUtils::GetMsgMimeConformToStandard(PRBool *_retval)
+NS_IMETHODIMP nsMsgCompUtils::GetMsgMimeConformToStandard(bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = nsMsgMIMEGetConformToStandard();
@@ -161,16 +161,16 @@ nsMsgCreateTempFileName(const char *tFileName)
 // This is the value a caller will Get if they don't Set first (like MDN
 // sending a return receipt), so init to the default value of the
 // mail.strictly_mime_headers preference.
-static PRBool mime_headers_use_quoted_printable_p = PR_TRUE;
+static bool mime_headers_use_quoted_printable_p = true;
 
-PRBool
+bool
 nsMsgMIMEGetConformToStandard (void)
 {
   return mime_headers_use_quoted_printable_p;
 }
 
 void
-nsMsgMIMESetConformToStandard (PRBool conform_p)
+nsMsgMIMESetConformToStandard (bool conform_p)
 {
   /*
   * If we are conforming to mime standard no matter what we set
@@ -295,10 +295,10 @@ mime_generate_headers (nsMsgCompFields *fields,
     return nsnull;
   }
 
-  PRBool usemime = nsMsgMIMEGetConformToStandard();
+  bool usemime = nsMsgMIMEGetConformToStandard();
   PRInt32 size = 0;
   char *buffer = 0, *buffer_tail = 0;
-  PRBool isDraft =
+  bool isDraft =
     deliver_mode == nsIMsgSend::nsMsgSaveAsDraft ||
     deliver_mode == nsIMsgSend::nsMsgSaveAsTemplate ||
     deliver_mode == nsIMsgSend::nsMsgQueueForLater ||
@@ -318,7 +318,7 @@ mime_generate_headers (nsMsgCompFields *fields,
   const char* pOtherHdr;
   char *convbuf;
 
-  PRBool hasDisclosedRecipient = PR_FALSE;
+  bool hasDisclosedRecipient = false;
 
   nsCAutoString headerBuf;    // accumulate header strings to get length
   headerBuf.Truncate();
@@ -623,7 +623,7 @@ mime_generate_headers (nsMsgCompFields *fields,
   // really send the message.
   if (!hasDisclosedRecipient && !isDraft) 
   {
-    PRBool bAddUndisclosedRecipients = PR_TRUE;
+    bool bAddUndisclosedRecipients = true;
     prefs->GetBoolPref("mail.compose.add_undisclosed_recipients", &bAddUndisclosedRecipients);
     if (bAddUndisclosedRecipients)
     {
@@ -735,7 +735,7 @@ mime_generate_headers (nsMsgCompFields *fields,
 static void
 GenerateGlobalRandomBytes(unsigned char *buf, PRInt32 len)
 {
-  static PRBool    firstTime = PR_TRUE;
+  static bool      firstTime = true;
 
   if (firstTime)
   {
@@ -784,13 +784,13 @@ mime_generate_attachment_headers (const char *type,
                   const char *x_mac_creator,
                   const char *real_name,
                   const char *base_url,
-                  PRBool /*digest_p*/,
+                  bool /*digest_p*/,
                   nsMsgAttachmentHandler * /*ma*/,
                   const char *attachmentCharset,
                   const char *bodyCharset,
-                  PRBool bodyIsAsciiOnly,
+                  bool bodyIsAsciiOnly,
                   const char *content_id,
-                  PRBool      aBodyDocument)
+                  bool        aBodyDocument)
 {
   NS_ASSERTION (encoding, "null encoding");
 
@@ -860,7 +860,7 @@ mime_generate_attachment_headers (const char *type,
     any warning.) To avoid this, we use the label 'US-ASCII' only when
     it's explicitly requested by setting the hidden pref.
     'mail.label_ascii_only_mail_as_us_ascii'. (bug 247958) */
-    PRBool labelAsciiAsAscii = PR_FALSE;
+    bool labelAsciiAsAscii = false;
     if (prefs)
       prefs->GetBoolPref("mail.label_ascii_only_mail_as_us_ascii",
                          &labelAsciiAsAscii);
@@ -1016,7 +1016,7 @@ mime_generate_attachment_headers (const char *type,
     PRInt32 col = 0;
     const char *s = base_url;
     const char *colon = PL_strchr (s, ':');
-    PRBool useContentLocation = PR_FALSE;   /* rhp - add this  */
+    bool useContentLocation = false;   /* rhp - add this  */
 
     if (!colon)
       goto GIVE_UP_ON_CONTENT_BASE;  /* malformed URL? */
@@ -1096,7 +1096,7 @@ GIVE_UP_ON_CONTENT_BASE:
   return PL_strdup(buf.get());
 }
 
-static PRBool isValidHost( const char* host )
+static bool isValidHost( const char* host )
 {
   if ( host )
     for (const char *s = host; *s; ++s)
@@ -1160,7 +1160,7 @@ msg_generate_message_id (nsIMsgIdentity *identity)
 }
 
 
-inline static PRBool is7bitCharset(const nsCString& charset)
+inline static bool is7bitCharset(const nsCString& charset)
 {
   // charset name is canonical (no worry about case-sensitivity)
   return charset.EqualsLiteral("HZ-GB-2312") ||
@@ -1175,7 +1175,7 @@ RFC2231ParmFolding(const char *parmName, const nsCString& charset,
 {
   NS_ENSURE_TRUE(parmName && *parmName && !parmValue.IsEmpty(), nsnull);
 
-  PRBool needEscape;
+  bool needEscape;
   nsCString dupParm;
 
   if (!NS_IsAscii(parmValue.get()) || is7bitCharset(charset)) {
@@ -1319,7 +1319,7 @@ RFC2231ParmFolding(const char *parmName, const nsCString& charset,
 LegacyParmFolding(const nsCString& aCharset,
                   const nsCString& aFileName, PRInt32 aParmFolding)
 {
-  PRBool usemime = nsMsgMIMEGetConformToStandard();
+  bool usemime = nsMsgMIMEGetConformToStandard();
   char *encodedRealName =
     nsMsgI18NEncodeMimePartIIStr(aFileName.get(), PR_FALSE, aCharset.get(),
                                  0, usemime);
@@ -1341,7 +1341,7 @@ LegacyParmFolding(const nsCString& aCharset,
   return encodedRealName;
 }
 
-PRBool
+bool
 mime_7bit_data_p (const char *string, PRUint32 size)
 {
   if ((!string) || (!*string))
@@ -1362,7 +1362,7 @@ mime_7bit_data_p (const char *string, PRUint32 size)
    rfc822 mailboxes.
  */
 char *
-mime_fix_header_1 (const char *string, PRBool addr_p, PRBool news_p)
+mime_fix_header_1 (const char *string, bool addr_p, bool news_p)
 {
   char *new_string;
   const char *in;
@@ -1452,7 +1452,7 @@ mime_fix_news_header (const char *string)
   return mime_fix_header_1 (string, PR_FALSE, PR_TRUE);
 }
 
-PRBool
+bool
 mime_type_requires_b64_p (const char *type)
 {
   if (!type || !PL_strcasecmp (type, UNKNOWN_CONTENT_TYPE))
@@ -1544,7 +1544,7 @@ mime_type_requires_b64_p (const char *type)
 // Some types should have a "charset=" parameter, and some shouldn't.
 // This is what decides.
 //
-PRBool
+bool
 mime_type_needs_charset (const char *type)
 {
   /* Only text types should have charset. */
@@ -1559,7 +1559,7 @@ mime_type_needs_charset (const char *type)
 
 /* Given a string, convert it to 'qtext' (quoted text) for RFC822 header purposes. */
 char *
-msg_make_filename_qtext(const char *srcText, PRBool stripCRLFs)
+msg_make_filename_qtext(const char *srcText, bool stripCRLFs)
 {
   /* newString can be at most twice the original string (every char quoted). */
   char *newString = (char *) PR_Malloc(PL_strlen(srcText)*2 + 1);
@@ -1604,14 +1604,13 @@ void
 msg_pick_real_name (nsMsgAttachmentHandler *attachment, const PRUnichar *proposedName, const char *charset)
 {
   const char *s, *s2;
-  char *s3;
 
-  if ( (attachment->m_real_name) && (*attachment->m_real_name))
+  if (!attachment->m_realName.IsEmpty())
     return;
 
   if (proposedName && *proposedName)
   {
-    attachment->m_real_name = ToNewUTF8String(nsAutoString(proposedName));
+    attachment->m_realName.Adopt(ToNewUTF8String(nsAutoString(proposedName)));
   }
   else //Let's extract the name from the URL
   {
@@ -1644,9 +1643,8 @@ msg_pick_real_name (nsMsgAttachmentHandler *attachment, const PRUnichar *propose
         PRInt32 endFilename = nonDataPart.FindChar(';', filenamePos);
         if (endFilename == -1)
           endFilename = endNonData;
-        PR_FREEIF(attachment->m_real_name);
-        attachment->m_real_name = ToNewCString(Substring(nonDataPart, filenamePos,
-                                                         endFilename - filenamePos));
+        attachment->m_realName = Substring(nonDataPart, filenamePos,
+                                           endFilename - filenamePos);
       }
       else
       {
@@ -1668,8 +1666,7 @@ msg_pick_real_name (nsMsgAttachmentHandler *attachment, const PRUnichar *propose
           filename.Append(filePrefix[i] + 'a');
         filename.Append('.');
         filename.Append(extension);
-        PR_FREEIF(attachment->m_real_name);
-        attachment->m_real_name = ToNewCString(filename);
+        attachment->m_realName = filename;
       }
     }
     else
@@ -1681,19 +1678,19 @@ msg_pick_real_name (nsMsgAttachmentHandler *attachment, const PRUnichar *propose
 
       if (s2) s = s2+1;
       /* Copy it into the attachment struct. */
-      PR_FREEIF(attachment->m_real_name);
-      attachment->m_real_name = PL_strdup (s);
+      attachment->m_realName = s;
+      PRInt32 charPos = attachment->m_realName.FindChar('?');
+      if (charPos != -1)
+        attachment->m_realName.SetLength(charPos);
       /* Now trim off any named anchors or search data. */
-      s3 = PL_strchr (attachment->m_real_name, '?');
-      if (s3) *s3 = 0;
-      s3 = PL_strchr (attachment->m_real_name, '#');
-      if (s3) *s3 = 0;
+      charPos = attachment->m_realName.FindChar('#');
+      if (charPos != -1)
+        attachment->m_realName.SetLength(charPos);
     }
     /* Now lose the %XX crap. */
     nsCString unescaped_real_name;
-    MsgUnescapeString(nsDependentCString(attachment->m_real_name), 0, unescaped_real_name);
-    NS_Free(attachment->m_real_name);
-    attachment->m_real_name = ToNewCString(unescaped_real_name);
+    MsgUnescapeString(attachment->m_realName, 0, unescaped_real_name);
+    attachment->m_realName = unescaped_real_name;
   }
 
   /* Now a special case for attaching uuencoded files...
@@ -1711,13 +1708,8 @@ msg_pick_real_name (nsMsgAttachmentHandler *attachment, const PRUnichar *propose
    cope with that; the code which copes with that is in the MIME parser, in
    libmime/mimei.c.
    */
-  if (attachment->m_already_encoded_p &&
-    attachment->m_encoding)
+  if (attachment->m_already_encoded_p && !attachment->m_encoding.IsEmpty())
   {
-    char *result = attachment->m_real_name;
-    PRInt32 L = PL_strlen(result);
-    const char **exts = 0;
-
     /* #### TOTAL KLUDGE.
      I'd like to ask the mime.types file, "what extensions correspond
      to obj->encoding (which happens to be "x-uuencode") but doing that
@@ -1728,27 +1720,15 @@ msg_pick_real_name (nsMsgAttachmentHandler *attachment, const PRUnichar *propose
 
      Note that it's special-cased in a similar way in libmime/mimei.c.
      */
-    if (!PL_strcasecmp(attachment->m_encoding, ENCODING_UUENCODE) ||
-      !PL_strcasecmp(attachment->m_encoding, ENCODING_UUENCODE2) ||
-      !PL_strcasecmp(attachment->m_encoding, ENCODING_UUENCODE3) ||
-      !PL_strcasecmp(attachment->m_encoding, ENCODING_UUENCODE4))
+    if (attachment->m_encoding.LowerCaseEqualsLiteral(ENCODING_UUENCODE) ||
+        attachment->m_encoding.LowerCaseEqualsLiteral(ENCODING_UUENCODE2) ||
+        attachment->m_encoding.LowerCaseEqualsLiteral(ENCODING_UUENCODE3) ||
+        attachment->m_encoding.LowerCaseEqualsLiteral(ENCODING_UUENCODE4))
     {
-      static const char *uue_exts[] = { "uu", "uue", 0 };
-      exts = uue_exts;
-    }
-
-    while (exts && *exts)
-    {
-      const char *ext = *exts;
-      PRInt32 L2 = PL_strlen(ext);
-      if (L > L2 + 1 &&             /* long enough */
-        result[L - L2 - 1] == '.' &&      /* '.' in right place*/
-        !PL_strcasecmp(ext, result + (L - L2))) /* ext matches */
-      {
-        result[L - L2 - 1] = 0;   /* truncate at '.' and stop. */
-        break;
-      }
-      exts++;
+      if (StringEndsWith(attachment->m_realName, NS_LITERAL_CSTRING(".uu")))
+        attachment->m_realName.Cut(attachment->m_realName.Length() - 3, 3);
+      else if (StringEndsWith(attachment->m_realName, NS_LITERAL_CSTRING(".uue")))
+        attachment->m_realName.Cut(attachment->m_realName.Length() - 4, 4);
     }
   }
 }
@@ -1776,7 +1756,7 @@ nsMsgNewURL(nsIURI** aInstancePtrResult, const char * aSpec)
   return rv;
 }
 
-PRBool
+bool
 nsMsgIsLocalFile(const char *url)
 {
   /*
@@ -1891,7 +1871,7 @@ GenerateFileNameFromURI(nsIURI *aURL)
     if (!hostStr)
       hostStr = PL_strdup(cp2);
 
-    PRBool isHTTP = PR_FALSE;
+    bool isHTTP = false;
     if (NS_SUCCEEDED(aURL->SchemeIs("http", &isHTTP)) && isHTTP)
     {
         returnString = PR_smprintf("%s.html", hostStr);
@@ -1988,7 +1968,7 @@ GetFolderURIFromUserPrefs(nsMsgDeliverMode aMode, nsIMsgIdentity* identity, nsCS
     rv = identity->GetStationeryFolder(uri);
   else
   {
-    PRBool doFcc = PR_FALSE;
+    bool doFcc = false;
     rv = identity->GetDoFcc(&doFcc);
     if (doFcc)
       rv = identity->GetFccFolder(uri);
@@ -2014,7 +1994,7 @@ static NS_DEFINE_CID(kCParserCID, NS_PARSER_CID);
  * unknown or deemed of no importance NULL could be passed.
  */
 nsresult
-ConvertBufToPlainText(nsString &aConBuf, PRBool formatflowed /* = PR_FALSE */)
+ConvertBufToPlainText(nsString &aConBuf, bool formatflowed /* = false */)
 {
   if (aConBuf.IsEmpty())
     return NS_OK;
@@ -2078,11 +2058,11 @@ ConvertBufToPlainText(nsString &aConBuf, PRBool formatflowed /* = PR_FALSE */)
  * or if a charset which are known to have problems with
  * format=flowed is specified. (See bug 26734 in Bugzilla)
  */
-PRBool UseFormatFlowed(const char *charset)
+bool UseFormatFlowed(const char *charset)
 {
   // Add format=flowed as in RFC 2646 unless asked to not do that.
-  PRBool sendFlowed = PR_TRUE;
-  PRBool disableForCertainCharsets = PR_TRUE;
+  bool sendFlowed = true;
+  bool disableForCertainCharsets = true;
   nsresult rv;
 
   nsCOMPtr<nsIPrefBranch> prefs(do_GetService(NS_PREFSERVICE_CONTRACTID, &rv));

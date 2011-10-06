@@ -117,6 +117,12 @@ toolbarbutton[type="menu-button"] {
   margin: 1px 3px;
 }
 
+.chromeclass-toolbar {
+  /* Toolbar buttons have a margin of 3px; adjust the toolbar so the leftmost
+     button lines up with the rest of the window. */
+  -moz-margin-start: -3px;
+}
+
 toolbox[labelalign="end"] .toolbarbutton-1,
 toolbox[labelalign="end"] .toolbarbutton-menubutton-button {
   -moz-box-orient: horizontal;
@@ -214,9 +220,10 @@ toolbar[iconsize="small"] .toolbarbutton-1 > .toolbarbutton-icon {
     #button-replyall, #button-replylist, #button-forward, .delete-button,
     .junk-button, #button-print, #button-stop, #button-file, #button-next,
     #button-previous, #button-mark, #button-tag, #button-goback,
-    #button-goforward, #button-compact, #button-archive,
+    #button-goforward, #button-compact, #button-archive, #hdrArchiveButton,
     #hdrReplyButton, #hdrReplyToSenderButton, #hdrReplyAllButton,
-    #hdrReplyListButton, #hdrForwardButton, #hdrTrashButton, #hdrJunkButton
+    #hdrReplyOnlyButton, #hdrReplyListButton, #hdrForwardButton,
+    #hdrTrashButton, #hdrJunkButton
     ) .toolbarbutton-icon {
   margin: 0 !important;
   width: auto !important;

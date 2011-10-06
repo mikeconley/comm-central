@@ -161,7 +161,6 @@
 #include "nsIMsgComposeSecure.h"
 #include "nsAutoPtr.h"
 #include "nsISupportsArray.h"
-
 //
 // Some necessary defines...
 //
@@ -197,7 +196,7 @@ public:
   // we can get away without all of the listener array code.
   //
   void (*m_attachments_done_callback) (nsresult  status,
-        const PRUnichar *error_msg, struct nsMsgAttachedFile *attachments);
+        const PRUnichar *error_msg, nsMsgAttachedFile *attachments);
 
   //
   // Define QueryInterface, AddRef and Release for this class
@@ -212,7 +211,7 @@ public:
   NS_IMETHOD  DeliverMessage();
   NS_IMETHOD  DeliverFileAsMail();
   NS_IMETHOD  DeliverFileAsNews();
-  void        DoDeliveryExitProcessing(nsIURI * aUrl, nsresult aExitCode, PRBool aCheckForMail);
+  void        DoDeliveryExitProcessing(nsIURI * aUrl, nsresult aExitCode, bool aCheckForMail);
   nsresult    FormatStringWithSMTPHostNameByID(PRInt32 aMsgId, PRUnichar **aString);
 
   nsresult    DoFcc();
@@ -224,7 +223,7 @@ public:
   nsresult SendToMagicFolder(nsMsgDeliverMode flag);
 
   // Check to see if it's ok to save msgs to the configured folder.
-  PRBool CanSaveMessagesToFolder(const char *folderURL);
+  bool CanSaveMessagesToFolder(const char *folderURL);
 
   //
   // FCC operations...
@@ -243,15 +242,15 @@ public:
                    const char       *aAccountKey,
                    nsMsgCompFields  *fields,
                    nsIFile          *sendFile,
-                   PRBool           digest_p,
-                   PRBool           dont_deliver_p,
+                   bool             digest_p,
+                   bool             dont_deliver_p,
                    nsMsgDeliverMode mode,
                    nsIMsgDBHdr      *msgToReplace,
                    const char       *attachment1_type,
                    const char       *attachment1_body,
                    PRUint32         attachment1_body_length,
-                   const nsMsgAttachmentData   *attachments,
-                   const nsMsgAttachedFile     *preloaded_attachments,
+                   nsIArray   *attachments,
+                   nsIArray     *preloaded_attachments,
                    const char       *password,
                    const nsACString &aOriginalMsgURI,
                    MSG_ComposeType  aType);
@@ -270,16 +269,16 @@ public:
   //
   // Attachment processing...
   //
-  nsresult    HackAttachments(const struct nsMsgAttachmentData *attachments,
-                              const struct nsMsgAttachedFile *preloaded_attachments);
+  nsresult    HackAttachments(nsIArray *attachments,
+                              nsIArray *preloaded_attachments);
   nsresult    CountCompFieldAttachments();
   nsresult    AddCompFieldLocalAttachments();
   nsresult    AddCompFieldRemoteAttachments(PRUint32  aStartLocation, PRInt32 *aMailboxCount, PRInt32 *aNewsCount);
 
   // Deal with multipart related data
   nsresult    ProcessMultipartRelated(PRInt32 *aMailboxCount, PRInt32 *aNewsCount);
-  nsresult    GetEmbeddedObjectInfo(nsIDOMNode *node, nsMsgAttachmentData *attachment, PRBool *acceptObject);
-  PRUint32    GetMultipartRelatedCount(PRBool forceToBeCalculated = PR_FALSE);
+  nsresult    GetEmbeddedObjectInfo(nsIDOMNode *node, nsMsgAttachmentData *attachment, bool *acceptObject);
+  PRUint32    GetMultipartRelatedCount(bool forceToBeCalculated = false);
   nsCOMPtr<nsISupportsArray> mEmbeddedObjectList; // it's initialized when calling GetMultipartRelatedCount
 
   // Body processing
@@ -306,7 +305,7 @@ public:
   nsCOMPtr<nsIOutputStream> mOutputFile;         // the actual output file stream
   PRUint32                  mMessageWarningSize; // Warn if a message is over this size!
 
-  PRBool                    m_dont_deliver_p;    // If set, we just return the nsIFile of the file
+  bool                      m_dont_deliver_p;    // If set, we just return the nsIFile of the file
                                                  // created, instead of actually delivering message.
   nsMsgDeliverMode          m_deliver_mode;      // nsMsgDeliverNow, nsMsgQueueForLater, nsMsgSaveAsDraft,
                                                  // nsMsgSaveAsTemplate and nsMsgSendUnsent
@@ -320,7 +319,7 @@ public:
   nsCOMPtr<nsIMsgSendListener>    mListener;
   nsCOMPtr<nsIMsgStatusFeedback>  mStatusFeedback;
   nsCOMPtr<nsIRequest>      mRunningRequest;
-  PRBool                    mSendMailAlso;
+  bool                      mSendMailAlso;
   nsCOMPtr<nsIFile>         mReturnFile;     // a holder for file spec's to be returned to caller
 
   // File where we stored our HTML so that we could make the plaintext form.
@@ -334,7 +333,7 @@ public:
   nsCOMPtr<nsIFile>         mCopyFile;
   nsCOMPtr<nsIFile>         mCopyFile2;
   nsRefPtr<nsMsgCopy>       mCopyObj;
-  PRBool                    mNeedToPerformSecondFCC;
+  bool                      mNeedToPerformSecondFCC;
 
   // For MHTML message creation
   nsCOMPtr<nsIEditor>       mEditor;
@@ -374,21 +373,21 @@ public:
   //
   // attachment states and other info...
   //
-  PRBool                  m_attachments_only_p;         // If set, then we don't construct a complete
+  bool                    m_attachments_only_p;         // If set, then we don't construct a complete
                                                         // MIME message; instead, we just retrieve the
                                                         // attachments from the network, store them in
                                                         // tmp files, and return a list of
                                                         // nsMsgAttachedFile structs which describe them.
 
-  PRBool                  m_pre_snarfed_attachments_p;  // If true, then the attachments were
+  bool                    m_pre_snarfed_attachments_p;  // If true, then the attachments were
                                                         // loaded by in the background and therefore
                                                         // we shouldn't delete the tmp files (but should
                                                         // leave that to the caller.)
 
-  PRBool                  m_digest_p;                   // Whether to be multipart/digest instead of
+  bool                    m_digest_p;                   // Whether to be multipart/digest instead of
                                                         // multipart/mixed.
 
-  PRBool                  m_be_synchronous_p;            // If true, we will load one URL after another,
+  bool                    m_be_synchronous_p;            // If true, we will load one URL after another,
                                                         // rather than starting all URLs going at once
                                                         // and letting them load in parallel.  This is
                                                         // more efficient if (for example) all URLs are
@@ -397,9 +396,9 @@ public:
                                                         // cause multiple connections to the news
                                                         // server to be opened, or would cause much seek()ing.
 
-  PRBool                  mGUINotificationEnabled;      // Should we throw up the GUI alerts on errors?
-  PRBool                  mLastErrorReported;           // Last error reported to the user.
-  PRBool                  mAbortInProcess;              // Used by Abort to avoid reentrance.
+  bool                    mGUINotificationEnabled;      // Should we throw up the GUI alerts on errors?
+  bool                    mLastErrorReported;           // Last error reported to the user.
+  bool                    mAbortInProcess;              // Used by Abort to avoid reentrance.
 
   nsCOMPtr<nsIMsgComposeSecure> m_crypto_closure;
 
@@ -431,6 +430,6 @@ private:
 extern nsresult mime_write_message_body(nsIMsgSend *state, const char *buf, PRInt32 size);
 extern char   *mime_get_stream_write_buffer(void);
 extern nsresult mime_encoder_output_fn (const char *buf, PRInt32 size, void *closure);
-extern PRBool UseQuotedPrintable(void);
+extern bool UseQuotedPrintable(void);
 
 #endif /*  __MSGSEND_H__ */

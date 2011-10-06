@@ -51,6 +51,10 @@
   background-position: top right;
 }
 
+#attachmentBucket {
+  width: 15em;
+}
+
 /* ::::: primary toolbar buttons ::::: */
  
 .toolbarbutton-1 {
@@ -234,7 +238,8 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
 /* ::::: special toolbar colors ::::: */
 
 #appcontent {
-  border: 1px solid ThreeDShadow;
+  border-top: 1px solid ThreeDShadow;
+  border-bottom: 1px solid ThreeDShadow;
 }
 
 #attachmentbucket-sizer {

@@ -71,6 +71,7 @@
 #include "nsMsgUtils.h"
 #include "nsNetUtil.h"
 #include "nsAutoPtr.h"
+#include "nsIMutableArray.h"
 
 static NS_DEFINE_CID( kMsgSendCID, NS_MSGSEND_CID);
 static NS_DEFINE_CID( kMsgCompFieldsCID, NS_MSGCOMPFIELDS_CID);
@@ -164,7 +165,7 @@ public:
   void Reset() { m_done = PR_FALSE;  m_location = nsnull;}
 
 public:
-  PRBool m_done;
+  bool m_done;
   nsCOMPtr <nsIFile> m_location;
 };
 
@@ -284,7 +285,7 @@ nsresult nsEudoraCompose::CreateComponents( void)
   return NS_ERROR_FAILURE;
 }
 
-void nsEudoraCompose::GetNthHeader( const char *pData, PRInt32 dataLen, PRInt32 n, nsCString& header, nsCString& val, PRBool unwrap)
+void nsEudoraCompose::GetNthHeader( const char *pData, PRInt32 dataLen, PRInt32 n, nsCString& header, nsCString& val, bool unwrap)
 {
   header.Truncate();
   val.Truncate();
@@ -385,7 +386,7 @@ void nsEudoraCompose::GetNthHeader( const char *pData, PRInt32 dataLen, PRInt32 
 }
 
 
-void nsEudoraCompose::GetHeaderValue( const char *pData, PRInt32 dataLen, const char *pHeader, nsCString& val, PRBool unwrap)
+void nsEudoraCompose::GetHeaderValue( const char *pData, PRInt32 dataLen, const char *pHeader, nsCString& val, bool unwrap)
 {
   val.Truncate();
   if (!pData)
@@ -510,70 +511,54 @@ void nsEudoraCompose::ExtractType( nsString& str)
   }
 }
 
-void nsEudoraCompose::CleanUpAttach( nsMsgAttachedFile *a, PRInt32 count)
-{
-  for (PRInt32 i = 0; i < count; i++) {
-    a[i].orig_url=nsnull;
-    if (a[i].type)
-      NS_Free( a[i].type);
-    if (a[i].description)
-      NS_Free( a[i].description);
-    if (a[i].encoding)
-      NS_Free( a[i].encoding);
-  }
-  delete [] a;
-}
-
-nsMsgAttachedFile * nsEudoraCompose::GetLocalAttachments( void)
+nsresult nsEudoraCompose::GetLocalAttachments(nsIArray **aArray)
 {
   /*
   nsIURI      *url = nsnull;
   */
-
+  nsresult rv;
+  nsCOMPtr<nsIMutableArray> attachments (do_CreateInstance(NS_ARRAY_CONTRACTID, &rv));
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_IF_ADDREF(*aArray = attachments);
   PRInt32 count = 0;
   if (m_pAttachments)
     count = m_pAttachments->Count();
   if (!count)
-    return( nsnull);
-
-  nsMsgAttachedFile *a = (nsMsgAttachedFile *) new nsMsgAttachedFile[count + 1];
-  if (!a)
-    return( nsnull);
-  memset(a, 0, sizeof(nsMsgAttachedFile) * (count + 1));
+    return NS_OK;
 
   nsCString urlStr;
   ImportAttachment * pAttach;
 
   for (PRInt32 i = 0; i < count; i++) {
+    nsCOMPtr<nsIMsgAttachedFile> a(do_CreateInstance(NS_MSGATTACHEDFILE_CONTRACTID, &rv));
+    NS_ENSURE_SUCCESS(rv, rv);
     // nsMsgNewURL(&url, "file://C:/boxster.jpg");
     // a[i].orig_url = url;
 
     // NS_PRECONDITION( PR_FALSE, "Forced Break");
 
     pAttach = (ImportAttachment *) m_pAttachments->ElementAt( i);
-                a[i].tmp_file = do_QueryInterface(pAttach->pAttachment);
+    nsCOMPtr<nsILocalFile> tmpFile = do_QueryInterface(pAttach->pAttachment);
+    a->SetTmpFile(tmpFile);
     urlStr.Adopt(0);
 
     nsCOMPtr <nsIURI> uri;
     nsresult rv = NS_NewFileURI(getter_AddRefs(uri), pAttach->pAttachment);
     NS_ENSURE_SUCCESS(rv, nsnull);
     uri->GetSpec(urlStr);
-    if (urlStr.IsEmpty()) {
-      CleanUpAttach( a, count);
-      return( nsnull);
-    }
-    rv = m_pIOService->NewURI( urlStr, nsnull, nsnull, getter_AddRefs(a[i].orig_url));
-    if (NS_FAILED( rv)) {
-      CleanUpAttach( a, count);
-      return( nsnull);
-    }
+    if (urlStr.IsEmpty())
+      return NS_ERROR_FAILURE;
 
-    a[i].type = strdup( pAttach->mimeType);
-    a[i].real_name = strdup( pAttach->description);
-    a[i].encoding = strdup( ENCODING_BINARY);
+    nsCOMPtr<nsIURI> origUrl;
+    rv = m_pIOService->NewURI( urlStr, nsnull, nsnull, getter_AddRefs(origUrl));
+    NS_ENSURE_SUCCESS(rv, rv);
+    a->SetOrigUrl(origUrl);
+    a->SetType(nsDependentCString(pAttach->mimeType));
+    a->SetRealName(nsDependentCString(pAttach->description));
+    a->SetEncoding(NS_LITERAL_CSTRING(ENCODING_BINARY));
+    attachments->AppendElement(a, PR_FALSE);
   }
-
-  return( a);
+  return NS_OK;
 }
 
 // Test a message send????
@@ -644,8 +629,8 @@ nsresult nsEudoraCompose::SendTheMessage(nsIFile *pMailImportLocation, nsIFile *
     pMimeType = ToNewCString(m_bodyType);
 
   // IMPORT_LOG0( "Outlook compose calling CreateAndSendMessage\n");
-  nsMsgAttachedFile *pAttach = GetLocalAttachments();
-
+  nsCOMPtr<nsIArray> pAttach;
+  GetLocalAttachments(getter_AddRefs(pAttach));
 
   /*
     l10n - I have the body of the message in the system charset,
@@ -711,9 +696,6 @@ nsresult nsEudoraCompose::SendTheMessage(nsIFile *pMailImportLocation, nsIFile *
 
   // IMPORT_LOG0( "Returned from ProxySend\n");
 
-  if (pAttach)
-    delete [] pAttach;
-
   EudoraSendListener *pListen = (EudoraSendListener *)m_pListener;
   if (NS_FAILED( rv)) {
     IMPORT_LOG1( "*** Error, CreateAndSendMessage FAILED: 0x%lx\n", rv);
@@ -761,7 +743,7 @@ nsresult nsEudoraCompose::SendTheMessage(nsIFile *pMailImportLocation, nsIFile *
 }
 
 
-PRBool SimpleBufferTonyRCopiedOnce::SpecialMemCpy( PRInt32 offset, const char *pData, PRInt32 len, PRInt32 *pWritten)
+bool SimpleBufferTonyRCopiedOnce::SpecialMemCpy( PRInt32 offset, const char *pData, PRInt32 len, PRInt32 *pWritten)
 {
   // Arg!!!!!  Mozilla can't handle plain CRs in any mail messages.  Particularly a
   // problem with Eudora since it doesn't give a rats a**
@@ -1006,7 +988,7 @@ static const char *gReplaceHeaders[kMaxReplaceHeaders] = {
   "cc"
 };
 
-PRBool nsEudoraCompose::IsReplaceHeader( const char *pHeader)
+bool nsEudoraCompose::IsReplaceHeader( const char *pHeader)
 {
   for (int i = 0; i < kMaxReplaceHeaders; i++) {
     if (!PL_strcasecmp( pHeader, gReplaceHeaders[i]))
@@ -1044,8 +1026,8 @@ nsresult nsEudoraCompose::WriteHeaders(nsIOutputStream *pDst, SimpleBufferTonyRC
   PRUint32 written;
   nsresult rv = NS_OK; // it's ok if we don't have the first header on the predefined lists.
   PRInt32 specialHeader;
-  PRBool specials[kMaxSpecialHeaders];
-  PRBool    hasDateHeader = PR_FALSE;
+  bool specials[kMaxSpecialHeaders];
+  bool      hasDateHeader = false;
   int i;
 
   for (i = 0; i < kMaxSpecialHeaders; i++)

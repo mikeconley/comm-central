@@ -106,7 +106,7 @@ struct _nsMIMESession {
     MKSessionCompleteFunc    complete;         /* normal end */
     MKSessionAbortFunc       abort;            /* abnormal end */
 
-    PRBool                  is_multipart;    /* is the stream part of a multipart sequence */
+    bool                    is_multipart;    /* is the stream part of a multipart sequence */
 };
 
 /*
@@ -126,27 +126,23 @@ struct mime_stream_data {           /* This struct is the state we pass around
   MimeHeaders         *headers;     /* Copy of outer most mime header */
 
   nsIMimeEmitter      *output_emitter;  /* Output emitter engine for libmime */
-  PRBool              firstCheck;   /* Is this the first look at the stream data */
+  bool                firstCheck;   /* Is this the first look at the stream data */
 };
 
 //
-// This struct is the state we use for loading drafts and templates...
+// This object is the state we use for loading drafts and templates...
 //
-struct mime_draft_data
+class mime_draft_data
 {
-  /* WARNING: You cannot use a c++ object, in that structure, which is dependent on its constructor or
-           destructor as mime_draft_data is not created using the new operator. nsCOMPtr however are ok
-           to use as long you set it to null before the structure get freed.
-  */
-
+public:
+  mime_draft_data();
   char                *url_name;           // original url name */
   nsMimeOutputType    format_out;          // intended output format; should be FO_OPEN_DRAFT */
   nsMIMESession       *stream;             // not used for now
   MimeObject          *obj;                // The root
   MimeDisplayOptions  *options;            // data for communicating with libmime
   MimeHeaders         *headers;            // Copy of outer most mime header
-  PRInt32             attachments_count;   // how many attachments we have
-  nsMsgAttachedFile   *attachments;        // attachments
+  nsTArray<nsMsgAttachedFile*> attachments;// attachments
   nsMsgAttachedFile   *messageBody;        // message body
   nsMsgAttachedFile   *curAttachment;       // temp
 
@@ -155,9 +151,9 @@ struct mime_draft_data
 
   MimeDecoderData     *decoder_data;
   char                *mailcharset;        // get it from CHARSET of Content-Type
-  PRBool              forwardInline;
-  PRBool              forwardInlineFilter;
-  PRBool              overrideComposeFormat; // Override compose format (for forward inline).
+  bool                forwardInline;
+  bool                forwardInlineFilter;
+  bool                overrideComposeFormat; // Override compose format (for forward inline).
   nsString            forwardToAddress;
   nsCOMPtr<nsIMsgIdentity>      identity;
   char                *originalMsgURI;     // the original URI of the message we are currently processing
@@ -186,13 +182,13 @@ extern "C" nsresult     mimeEmitterAddAttachmentField(MimeDisplayOptions *opt, c
 extern "C" nsresult     mimeEmitterAddHeaderField(MimeDisplayOptions *opt, const char *field, const char *value);
 extern "C" nsresult     mimeEmitterAddAllHeaders(MimeDisplayOptions *opt, const char *allheaders, const PRInt32 allheadersize);
 extern "C" nsresult     mimeEmitterStartAttachment(MimeDisplayOptions *opt, const char *name, const char *contentType, const char *url,
-                                                   PRBool aIsExternalAttachment);
+                                                   bool aIsExternalAttachment);
 extern "C" nsresult     mimeEmitterEndAttachment(MimeDisplayOptions *opt);
 extern "C" nsresult     mimeEmitterEndAllAttachments(MimeDisplayOptions *opt);
-extern "C" nsresult     mimeEmitterStartBody(MimeDisplayOptions *opt, PRBool bodyOnly, const char *msgID, const char *outCharset);
+extern "C" nsresult     mimeEmitterStartBody(MimeDisplayOptions *opt, bool bodyOnly, const char *msgID, const char *outCharset);
 extern "C" nsresult     mimeEmitterEndBody(MimeDisplayOptions *opt);
 extern "C" nsresult     mimeEmitterEndHeader(MimeDisplayOptions *opt);
-extern "C" nsresult     mimeEmitterStartHeader(MimeDisplayOptions *opt, PRBool rootMailHeader, PRBool headerOnly, const char *msgID,
+extern "C" nsresult     mimeEmitterStartHeader(MimeDisplayOptions *opt, bool rootMailHeader, bool headerOnly, const char *msgID,
                                                const char *outCharset);
 extern "C" nsresult     mimeEmitterUpdateCharacterSet(MimeDisplayOptions *opt, const char *aCharset);
 
@@ -218,7 +214,7 @@ extern "C" nsresult         nsMimeNewURI(nsIURI** aInstancePtrResult, const char
 
 extern "C" nsresult SetMailCharacterSetToMsgWindow(MimeObject *obj, const char *aCharacterSet);
 
-extern "C"  nsresult GetMailNewsFont(MimeObject *obj, PRBool styleFixed, PRInt32 *fontPixelSize, PRInt32 *fontSizePercentage, nsCString& fontLang);
+extern "C"  nsresult GetMailNewsFont(MimeObject *obj, bool styleFixed, PRInt32 *fontPixelSize, PRInt32 *fontSizePercentage, nsCString& fontLang);
 
 
 #ifdef __cplusplus
