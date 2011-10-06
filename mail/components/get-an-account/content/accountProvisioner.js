@@ -74,13 +74,11 @@ function getLocalStorage(page) {
  * later.
  */
 function saveState() {
-  var firstname = $("#FirstName").val();
-  var lastname = $("#LastName").val();
+  var name = $("#Name").val();
   var username = $("#username").val();
   var domain = $("#provider").find(":selected").attr("domain");
 
-  storage.setItem("firstname", firstname);
-  storage.setItem("lastname", lastname);
+  storage.setItem("name", name);
   storage.setItem("username", username);
   storage.setItem("domain", domain);
 }
@@ -355,8 +353,7 @@ $(function() {
 
     // Replace the variables in the url.
     let url = provider.api;
-    let firstName = $("#FirstName").val();
-    let lastName = $("#LastName").val();
+    let [firstName, lastName] = splitName($("#Name").val());
     let email = $(this).attr("address");
     url = url.replace("{firstname}", firstName);
     url = url.replace("{lastname}", lastName);
@@ -418,8 +415,7 @@ $(function() {
 
   $("#back").click(function() {
     actionList.push("Going back");
-    $("#FirstName").val($("#account\\.first_name").val());
-    $("#LastName").val($("#account\\.last_name").val());
+    $("#Name").val($("#account\\.first_name").val() + " " + $("#account\\.last_name").val());
     $("#window").css("height", window.innerHeight - 1);
     $("#content .description").show();
     $("button.create").show();

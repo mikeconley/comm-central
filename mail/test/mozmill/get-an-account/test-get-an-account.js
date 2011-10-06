@@ -103,8 +103,7 @@ function test_get_an_account() {
 
   // Fill in some data
   let $ = w.$;
-  $("#FirstName").val("John");
-  $("#LastName").val("Doe");
+  $("#Name").val("John Doe");
   $(".search").click();
   mc.waitFor(function () $("#results").children().length > 0);
 

@@ -1,5 +1,5 @@
 <!ENTITY window.title "Welcome to Thunderbird">
-<!ENTITY header.label "Would you like a new email address for Thunderbird?">
+<!ENTITY header.label "Want a new email address for Thunderbird?">
 <!ENTITY error.line1 "Sorry we had no luck finding suggestions.">
 <!ENTITY error.line2 "You try can search for nicknames or any other term to find more emails">
 <!ENTITY error.suggest 'Also you might try one of the <a href="http://www.mozillamessaging.com/en-US/thunderbird/features/email_providers.html" class="external">free email account alternatives</a>.'>
