@@ -115,7 +115,6 @@
   locale/@AB_CD@/messenger/addressbook/abAddressBookNameDialog.dtd      (%chrome/messenger/addressbook/abAddressBookNameDialog.dtd)
   locale/@AB_CD@/messenger/addressbook/abCardOverlay.dtd                (%chrome/messenger/addressbook/abCardOverlay.dtd)
   locale/@AB_CD@/messenger/addressbook/abCardViewOverlay.dtd            (%chrome/messenger/addressbook/abCardViewOverlay.dtd)
-  locale/@AB_CD@/messenger/addressbook/abDirTreeOverlay.dtd             (%chrome/messenger/addressbook/abDirTreeOverlay.dtd)
   locale/@AB_CD@/messenger/addressbook/abResultsPaneOverlay.dtd         (%chrome/messenger/addressbook/abResultsPaneOverlay.dtd)
   locale/@AB_CD@/messenger/addressbook/abMailListDialog.dtd             (%chrome/messenger/addressbook/abMailListDialog.dtd)
   locale/@AB_CD@/messenger/addressbook/addressBook.properties           (%chrome/messenger/addressbook/addressBook.properties)
@@ -187,3 +186,6 @@
   locale/@AB_CD@/mozldap/ldap.properties                                (%chrome/mozldap/ldap.properties)
 % locale communicator @AB_CD@ %locale/@AB_CD@/communicator/
   locale/@AB_CD@/communicator/utilityOverlay.dtd                        (%chrome/communicator/utilityOverlay.dtd)
+% locale testpilot @AB_CD@ %locale/@AB_CD@/feedback/
+  locale/@AB_CD@/feedback/main.dtd                       (%feedback/main.dtd)
+  locale/@AB_CD@/feedback/main.properties                (%feedback/main.properties)
