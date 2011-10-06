@@ -145,6 +145,14 @@ function expandSection(existing) {
     });
 }
 
+function splitName(str) {
+  let i = str.lastIndexOf(" ");
+  if (i >= 0)
+    return [str.substring(0, i), str.substring(i+1)];
+  else
+    return [str, ""];
+}
+
 $(function() {
   // Snarf the things I need out of the window arguments.
   let NewMailAccount = window.arguments[0].NewMailAccount;
@@ -200,12 +208,10 @@ $(function() {
         .append($("<span />").text(")"+sep));
     };
   });
-  let firstname = storage.getItem("firstname") || $("#FirstName").text();
-  let lastname = storage.getItem("lastname") || $("#LastName").text();
+  let name = storage.getItem("name") || $("#Name").text();
   let username = storage.getItem("username");
   let domain = storage.getItem("domain");
-  $("#FirstName").val(firstname);
-  $("#LastName").val(lastname);
+  $("#Name").val(name);
   saveState();
 
   let metaKey = false;
@@ -273,19 +279,14 @@ $(function() {
     actionList.push("Searching");
     $("#notifications").children().hide();
     saveState();
-    var firstname = $("#FirstName").val();
-    var lastname = $("#LastName").val();
-    if (firstname.length <= 0) {
-      $("#FirstName").select().focus();
-      $(".search").removeAttr("disabled");
-      return;
-    }
-    if (lastname.length <= 0) {
-      $("#LastName").select().focus();
+    let name = $("#Name").val();
+    if (name.length <= 0) {
+      $("#Name").select().focus();
       $(".search").removeAttr("disabled");
       return;
     }
     $("#notifications .spinner").show();
+    let [firstname, lastname] = splitName(name);
     $.getJSON(suggestFromName,
               {"first_name": firstname, "last_name": lastname},
               function(data) {

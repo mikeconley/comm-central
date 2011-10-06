@@ -49,7 +49,7 @@
 <!ENTITY half-manual-test.accesskey      "t">
 <!ENTITY manual-edit.label               "Manual config">
 <!ENTITY manual-edit.accesskey           "M">
-<!ENTITY back-to-provisioner.label       "Back to previous">
+<!ENTITY back-to-provisioner.label       "Back">
 <!ENTITY back-to-provisioner.accesskey   "B">
 
 

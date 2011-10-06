@@ -148,16 +148,11 @@ input[type="submit"].search {
   font-weight: bold;
 }
 
-#search #FirstName {
+#search #Name {
   padding-left: 24px;
   background-image: url("chrome://messenger/content/getanaccount/search.gif");
   background-position: 5px center;
   background-repeat: no-repeat;
-}
-
-/* move over for the search image */
-#FirstName_placeholder {
-  padding-left: 25px;
 }
 
 #search input[type="text"]:placeholder {

@@ -19,3 +19,5 @@
 <!ENTITY successful.attach "Attach a personal signature to my email">
 <!ENTITY successful.attach.desc "You can automatically attach a quote or some information about yourself to the end of every message you send.">
 <!ENTITY successful.close "Close this window.">
+<!ENTITY input.namePlaceholder "Your name, or nickname">
+<!ENTITY input.search "Search">
