@@ -101,7 +101,7 @@ pref("browser.download.progress.closeWhenDone", false);
 // the Content-Disposition filename) before giving up and falling back to
 // picking a filename without that info in hand so that the user sees some
 // feedback from their action.
-pref("browser.download.saveLinkAsFilenameTimeout", 1000);
+pref("browser.download.saveLinkAsFilenameTimeout", 4000);
 
 // Use the findbar instead of the dialog box
 pref("browser.findbar.enabled", true);
@@ -129,7 +129,7 @@ pref("browser.search.openintab", false);
 pref("browser.search.opensidebarsearchpanel", false);
 
 // Open context search results in either a new window or tab.
-pref("browser.search.opentabforcontextsearch", false);
+pref("browser.search.opentabforcontextsearch", true);
 
 // Send ping to the server to update.
 pref("browser.search.update", true);

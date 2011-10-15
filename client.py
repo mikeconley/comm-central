@@ -336,7 +336,7 @@ def do_git_pull(dir, repository, git, rev):
 
         print "TinderboxPrint:<a href=%s/rev/%s title='Built from %s revision %s'>%s:%s</a>"  % ( url, got_rev, repo_name, got_rev, repo_short_name, got_rev)
 
-def do_hg_pull(dir, repository, hg, rev):
+def do_hg_pull(dir, repository, hg, rev, hgtool=None):
     """Clone if the dir doesn't exist, pull if it does.
     """
 
@@ -350,7 +350,10 @@ def do_hg_pull(dir, repository, hg, rev):
     if options.hgopts:
         hgopts = options.hgopts.split()
 
-    if not os.path.exists(fulldir):
+    if hgtool:
+        hgtoolcmd = hgtool.split()
+        check_call_noisy(['python'] + hgtoolcmd + [repository, fulldir], retryMax=options.retries)
+    elif not os.path.exists(fulldir):
         fulldir = os.path.join(topsrcdir, dir)
         check_call_noisy([hg, 'clone'] + hgcloneopts + hgopts + [repository, fulldir],
                          retryMax=options.retries)
@@ -429,7 +432,7 @@ o.add_option("--comm-rev", dest="comm_rev",
              help="Revision of comm (Calendar/Mail/Suite) repository to update to. Default: \"" + get_DEFAULT_tag('COMM_REV') + "\"")
 
 o.add_option("-z", "--mozilla-repo", dest="mozilla_repo",
-             default=None,
+             default=DEFAULTS['MOZILLA_REPO'],
              help="URL of Mozilla repository to pull from (default: use hg default in mozilla/.hg/hgrc; or if that file doesn't exist, use \"" + DEFAULTS['MOZILLA_REPO'] + "\".)")
 o.add_option("--skip-mozilla", dest="skip_mozilla",
              action="store_true", default=False,
@@ -488,6 +491,9 @@ o.add_option("--hg", dest="hg", default=os.environ.get('HG', 'hg'),
 o.add_option("-v", "--verbose", dest="verbose",
              action="store_true", default=False,
              help="Enable verbose output on hg updates")
+o.add_option("--hgtool", dest="hgtool",
+             default=None,
+             help="Path to hgtool, if wanted")
 o.add_option("--hg-options", dest="hgopts",
              help="Pass arbitrary options to hg commands (i.e. --debug, --time)")
 o.add_option("--hg-clone-options", dest="hgcloneopts",
