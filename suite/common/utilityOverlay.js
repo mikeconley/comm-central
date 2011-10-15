@@ -1523,7 +1523,9 @@ function switchToTabHavingURI(aURI, aOpenNew, aCallback) {
 
   // No opened tab has that url.
   if (aOpenNew) {
-    let browserWin = openUILinkIn(aURI.spec, "tabfocused");
+    let newWindowPref = Services.prefs.getIntPref("browser.link.open_external");
+    let where = newWindowPref == kNewTab ? "tabfocused" : "window";
+    let browserWin = openUILinkIn(aURI.spec, where);
     if (aCallback) {
       browserWin.addEventListener("pageshow", function(event) {
         if (event.target.location.href != aURI.spec)
@@ -1629,5 +1631,6 @@ function GetFileFromString(aString)
   let commandLine = Components.classes["@mozilla.org/toolkit/command-line;1"]
                               .createInstance(Components.interfaces.nsICommandLine);
   let uri = commandLine.resolveURI(aString);
-  return uri instanceof Components.interfaces.nsIFileURL ? uri.file : null;
+  return uri instanceof Components.interfaces.nsIFileURL ?
+         uri.file.QueryInterface(Components.interfaces.nsILocalFile) : null;
 }
