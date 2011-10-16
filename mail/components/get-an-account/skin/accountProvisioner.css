@@ -411,11 +411,6 @@ input[type="submit"].search {
 }
 /* END hbox/vbox normalization from http://alex.dojotoolkit.org/2009/08/css-3-progress/ */
 
-/* This stuff is a bit dirty, but I couldn't find where else to set them so things so we won't get vertical scroll */
-#content input, #content select {
-  max-width: 20em !important;
-}
-
 .cvv-image {
   vertical-align: middle;
   margin-left: 10px;
