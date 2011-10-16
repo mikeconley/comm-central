@@ -291,7 +291,10 @@ $(function() {
       let results = $("#results").empty();
       $(".search").removeAttr("disabled");
       let searchingFailed = true;
+      let userLanguages = // "fr-FR, fr"; // for testing
+        Services.prefs.getCharPref("intl.accept_languages").split(",");
 
+      let foundUserLang = 0;
       if (data && data.length) {
         actionList.push("Searching successful");
         $("#FirstAndLastName").text(firstname + " " + lastname);
@@ -326,8 +329,27 @@ $(function() {
           }
           group.find("button.create").data("provider", provider.provider);
           group.append($("#resultsFooter").clone().removeClass("displayNone"));
+
+          let supportsSomeUserLang =
+            providers[provider.provider].languages
+              .some(function (x) userLanguages.indexOf(x) >= 0);
+          if (supportsSomeUserLang) {
+            foundUserLang++;
+          } else {
+            group.addClass("noUserLang");
+          }
+
           results.append(group);
         }
+        if (foundUserLang == 0) {
+          // CSS will take care of un-hiding the right providers thanks to the
+          // noUserLang class.
+          $("#results").addClass("showAll");
+          $(".noProvidersForLang").show();
+        } else if (foundUserLang < data.length) {
+          $(".showMoreProviders").show();
+        }
+
         $("#notifications").children().hide();
         $("#notifications .success").show();
         ;

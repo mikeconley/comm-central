@@ -133,9 +133,27 @@
       </div>
 
       <div class="description">
-        &partnership.description;
-        <span class="commentary">
-        </span>
+
+        <div class="showMoreProviders" style="display: none">
+          <p>
+            &msg.showMoreProviders;
+            <span class="showMoreProvidersLink"
+              onclick="$('#results').addClass('showAll');
+              $('.showMoreProviders').hide();">&link.showMoreProviders;</span>
+          </p>
+        </div>
+
+        <div class="noProvidersForLang" style="display: none">
+          <p>
+            &msg.noProvidersForLang;
+          </p>
+        </div>
+
+        <p>
+          &partnership.description;
+        </p>
+        <p class="commentary">
+        </p>
       </div>
     </div>
 

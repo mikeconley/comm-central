@@ -5,6 +5,9 @@
 <!ENTITY error.suggest 'Also you might try one of the <a href="http://www.mozillamessaging.com/en-US/thunderbird/features/email_providers.html" class="external">free email account alternatives</a>.'>
 <!ENTITY success.title 'Hello <span id="FirstAndLastName"></span>, the following email addresses are available to you:'>
 <!ENTITY success.tip "(You can also search for nicknames or any other term to find more emails)">
+<!ENTITY msg.showMoreProviders "We have more providers, but they may not have a subscription page in your language.">
+<!ENTITY link.showMoreProviders "Show them">
+<!ENTITY msg.noProvidersForLang "None of our providers provide a subscription page that's available in your language. All providers have been shown.">
 <!ENTITY partnership.description "In partnership with several providers, Thunderbird can offer you a new email account. Just fill in your first and last name, or any other words you’d like, in the fields above to get started.">
 <!ENTITY existing.header "Already have an address you want to use?">
 <!ENTITY tinyheader.title "Got an address?">

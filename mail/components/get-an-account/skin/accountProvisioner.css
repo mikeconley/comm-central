@@ -105,6 +105,14 @@ button:active {
   margin: 5px;
 }
 
+.description p {
+  margin: 5px;
+}
+
+.showMoreProviders, .noProvidersForLang {
+  font-weight: bold;
+}
+
 /* External things are links that open in a browser, so underline them. */
 .external {
   text-decoration: underline;
@@ -243,6 +251,15 @@ input[type="submit"].search {
 }
 
 #results .row.more:hover {
+  cursor: pointer;
+}
+
+#results:not(.showAll) .noUserLang {
+  display: none;
+}
+
+.showMoreProvidersLink {
+  text-decoration: underline;
   cursor: pointer;
 }
 
