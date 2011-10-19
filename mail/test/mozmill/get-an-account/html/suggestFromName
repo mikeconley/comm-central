@@ -1,0 +1,2 @@
+
+[{"product": "personalized_email", "addresses": ["green@aol.com", "green_llama@aol.com", "gllama@aol.com"], "succeeded": true, "quote": "b28acb3c0a464d33af22", "price": 0, "provider": "aol"}, {"product": "personalized_email", "addresses": ["green@llama.com", "me@greenllama.com", "green@greenllama.com", "green@greenllama.net", "green@greenllama.org", "green@greenllama.me", "me@greenllama.me"], "succeeded": true, "quote": "3f93e48679ab46a49475", "price": "20.00", "provider": "hover"}]

@@ -1,0 +1,20 @@
+[{"id": "hover",
+  "label": "Hover.com",
+  "paid": true,
+  "languages" : ["en-US"],
+  "api": "https://www.hover.com/tbReg?first={firstname}&last={lastname}&email={email}",
+  "url": "https://www.hover.com/api/order",
+  "tos_url": "http://ask.hover.com/forums/32358/entries/21801",
+  "privacy_url": "http://www.tucows.com/privacy.html",
+  "log_url": "http://broker.live.mozillamessaging.com/provider/hover/log"
+ },
+ {"id": "aol",
+  "label": "AOL",
+  "paid": false,
+  "languages" : ["en-US", "fr-FR"],
+  "api": "http://localhost:43336/registration.html",
+  "url": "http://aol.com/",
+  "tos_url": "http://canada.aol.com/portal/misc/LegalNotices.adp",
+  "privacy_url": "http://info.yahoo.com/legal/us/yahoo/utos/utos-173.htmll",
+  "search_engine": "AOL Search"
+}]
