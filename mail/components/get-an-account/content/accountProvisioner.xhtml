@@ -52,10 +52,10 @@
         href="chrome://messenger/content/getanaccount/accountProvisioner.css" />
 
   <script type="text/javascript;version=1.8"
-          src="http://code.jquery.com/jquery-1.6.4.js">
+          src="chrome://messenger/content/jquery.js">
   </script>
   <script type="text/javascript;version=1.8"
-          src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.js">
+          src="chrome://messenger/content/jquery-ui.js">
   </script>
   <script type="text/javascript;version=1.8"
           src="chrome://messenger/content/accountcreation/util.js">
@@ -168,6 +168,17 @@
     </div>
 
     <button class="close">&content.close;</button>
+  </div>
+
+  <div id="search_engine_page">
+    <h2>&search_engine.title;</h2>
+    <div>&search_engine.message;</div>
+    <div id="search_engine_wrap">
+      <img src="chrome://messenger/content/getanaccount/search.png"/>
+      <input type="checkbox" id="search_engine_check" />
+      <span id="search_engine_desc"></span>
+    </div>
+    <button id="search_engine_next">&search_engine.button;</button>
   </div>
 
   <div id="successful_account">

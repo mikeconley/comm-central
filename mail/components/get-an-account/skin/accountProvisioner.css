@@ -345,10 +345,14 @@ input[type="submit"].search {
 
 /* === SUCCESSFUL ACCOUNT CREATION PAGE === */
 
-#successful_account {
+#successful_account, #search_engine_page {
   display: none;
   padding: 10px;
   width: 100%;
+}
+
+#search_engine_wrap {
+  margin: 1em 0;
 }
 
 
@@ -442,7 +446,7 @@ input[type="submit"].search {
   padding-bottom: 1em;
 }
 
-#success-compose, #success-addons, #success-signature {
+#success-compose, #success-addons, #success-signature, #search_engine_wrap {
   padding: 10px;
   margin-bottom: 10px;
   cursor: pointer;
@@ -453,5 +457,10 @@ input[type="submit"].search {
 
 #success-compose img, #success-addons img, #success-signature img {
   float: left;
+  margin-right: 10px;
+}
+
+#search_engine_wrap img {
+  vertical-align: middle;
   margin-right: 10px;
 }

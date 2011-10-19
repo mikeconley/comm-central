@@ -17,3 +17,4 @@ messenger.jar:
     content/messenger/getanaccount/success-border.png         (skin/success-border.png)
     content/messenger/getanaccount/success-compose.png        (skin/success-compose.png)
     content/messenger/getanaccount/success-signature.png      (skin/success-signature.png)
+    content/messenger/getanaccount/search.png                 (skin/search.png)

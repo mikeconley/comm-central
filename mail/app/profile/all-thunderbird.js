@@ -731,5 +731,4 @@ pref("getanaccount.providerList", "http://bwinton.latte.ca/Work/provider/list");
 pref("getanaccount.logUrl", "https://broker-live.mozillamessaging.com/provider/log");
 // pref("getanaccount.suggestFromName", "https://broker-live.mozillamessaging.com/provider/hover/suggest");
 pref("getanaccount.suggestFromName", "http://bwinton.latte.ca/Work/provider/suggestFromName.cgi");
-pref("getanaccount.checkAddress", "https://broker-live.mozillamessaging.com/provider/hover/check");
 

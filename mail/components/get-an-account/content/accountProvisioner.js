@@ -83,6 +83,26 @@ function saveState() {
   storage.setItem("domain", domain);
 }
 
+/**
+ * Get the default opensearch engine. Stolen from bug 677421.
+ */
+function getDefaultSearchEngine() {
+  if (Services.search.defaultEngine != null)
+    return Services.search.defaultEngine.name;
+  return "Google";
+}
+
+/**
+ * Get the current opensearch engine. Stolen from bug 677421.
+ */
+function getCurrentSearchEngine() {
+  try {
+    return Services.prefs.getCharPref("mail.websearch.engine");
+  } catch (e) {
+    return getDefaultSearchEngine();
+  }
+}
+
 const MAX_SMALL_ADDRESSES = 2;
 
 var storedData = {};
@@ -172,7 +192,6 @@ $(function() {
   let prefs = Services.prefs;
   let providerList = prefs.getCharPref("getanaccount.providerList");
   let suggestFromName = prefs.getCharPref("getanaccount.suggestFromName");
-  let checkAddress = prefs.getCharPref("getanaccount.checkAddress");
   let logUrl = prefs.getCharPref("getanaccount.logUrl");
 
   let commentary = $(".commentary")
@@ -397,10 +416,15 @@ $(function() {
     tabmail.openTab("contentTab", {
       contentPage: url,
       onLoad: function (event, aBrowser) {
+        // We're passing the value of search_engine to the listener so that when
+        // we reopen that window, we don't have to wait for the re-parsing of
+        // the provider list to figure out what is the search engine name for
+        // that provider.
         let progressListener = new mail3Pane.AccountProvisionerListener(
           aBrowser, {
             realName: firstName + " " + lastName,
             email: email,
+            searchEngine: provider.search_engine,
           });
         aBrowser.webProgress.addProgressListener(
           progressListener, Ci.nsIWebProgress.NOTIFY_ALL);
@@ -454,7 +478,23 @@ $(function() {
     } } );
   });
 
-  if (window.arguments[0].success) {
+  if (window.arguments[0].search_engine) {
+    let engine = window.arguments[0].search_engine;
+    $("#window").hide();
+    $("#search_engine_page").show();
+    $("#search_engine_next").click(function () {
+      if ($("#search_engine_check").prop("checked")) {
+        Services.prefs.setCharPref("mail.websearch.engine", engine);
+      }
+      $("#search_engine_page").hide();
+      $("#successful_account").show();
+    });
+
+    let isChecked = (getCurrentSearchEngine() == getDefaultSearchEngine())
+      || (getCurrentSearchEngine() == engine);
+    $("#search_engine_check").prop("checked", isChecked);
+    $("#search_engine_desc").html(stringBundle.get("searchDesc", [engine]));
+  } else if (window.arguments[0].success) {
     $("#window").hide();
     $("#successful_account").show();
   }

@@ -57,6 +57,13 @@ Cu.import('resource://mozmill/modules/elementslib.js', elib);
 Cu.import('resource://gre/modules/Services.jsm');
 Cu.import("resource:///modules/mailServices.js");
 
+// RELATIVE_ROOT messes with the collector, so we have to bring the path back
+// so we get the right path for the resources.
+// Note: this one adds to '' as we need to make sure that favicon.ico is in the
+// root directory.
+var url = collector.addHttpResource('../get-an-account/html', '');
+Services.prefs.setCharPref("getanaccount.providerList", url + "providerList");
+Services.prefs.setCharPref("getanaccount.suggestFromName", url + "suggestFromName");
 
 const kProvisionerUrl = "chrome://messenger/content/getanaccount/accountProvisioner.xhtml";
 
@@ -103,7 +110,7 @@ function test_get_an_account() {
 
   // Fill in some data
   let $ = w.$;
-  $("#Name").val("John Doe");
+  $("#Name").val("Green Llama");
   $(".search").click();
   mc.waitFor(function () $("#results").children().length > 0);
 
@@ -117,7 +124,7 @@ function test_get_an_account() {
 
   // First, make sure the page is loaded.
   wait_for_content_tab_load(undefined, function (aURL) {
-    return aURL.host == "bwinton.latte.ca";
+    return aURL.host == "localhost";
   });
   let tab = mc.tabmail.currentTabInfo;
   let nAccounts = function ()

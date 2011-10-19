@@ -24,3 +24,6 @@
 <!ENTITY successful.close "Close this window.">
 <!ENTITY input.namePlaceholder "Your name, or nickname">
 <!ENTITY input.search "Search">
+<!ENTITY search_engine.title "Customize your search engine">
+<!ENTITY search_engine.message "Your email provider can also provide you with web search capabilities.">
+<!ENTITY search_engine.button "Finish">

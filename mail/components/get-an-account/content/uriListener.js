@@ -72,6 +72,7 @@ Services.scriptloader.loadSubScript("chrome://messenger/content/accountcreation/
  * @param aParams An object containing various bits of information.
  * @param aParams.realName The real name of the person
  * @param aParams.email The email address the person picked.
+ * @param aParams.searchEngine The search engine associated to that provider.
  */
 function AccountProvisionerListener (aBrowser, aParams) {
   this.browser = aBrowser;
@@ -83,6 +84,7 @@ AccountProvisionerListener.prototype = {
                            /* in nsIRequest */ aRequest,
                            /* in unsigned long */ aStateFlags,
                            /* in nsresult */ aStatus) {
+    return;
     // This is the earliest notification we get...
     if ((aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_TRANSFERRING) &&
         (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_REQUEST)) {
@@ -98,30 +100,27 @@ AccountProvisionerListener.prototype = {
         tabmail.closeTab(myTabInfo);
 
         // Fire off a request to get the XML again, this time so that we can
-        // analyze it and get its contents. Don't ask about the setTimeout: it's
-        // just that without it, the tests break and the request never
-        // completes. Go figure.
+        // analyze it and get its contents.
         aRequest.QueryInterface(Ci.nsIChannel);
-        window.setTimeout(function () {
-          let url = aRequest.URI;
-          let newChannel = NetUtil.newChannel(url);
-          let inputStream = newChannel.open(); // asyncOpen here?
-          let str = NetUtil.readInputStreamToString(inputStream, inputStream.available());
-          try {
-            let xml = new XML(str);
-            let accountConfig = accountCreationFuncs.readFromXML(xml);
-            accountCreationFuncs.replaceVariables(accountConfig,
-              this.params.realName,
-              this.params.email);
-            accountCreationFuncs.createAccountInBackend(accountConfig);
-            NewMailAccountProvisioner(null, {
-              success: true,
-            });
-          } catch (e) {
-            dump(e+"\n");
-            dump(e.stack+"\n");
-          }
-        }.bind(this), 0);
+        let url = aRequest.URI;
+        let newChannel = NetUtil.newChannel(url);
+        let inputStream = newChannel.open(); // asyncOpen here?
+        let str = NetUtil.readInputStreamToString(inputStream, inputStream.available());
+        try {
+          let xml = new XML(str);
+          let accountConfig = accountCreationFuncs.readFromXML(xml);
+          accountCreationFuncs.replaceVariables(accountConfig,
+            this.params.realName,
+            this.params.email);
+          accountCreationFuncs.createAccountInBackend(accountConfig);
+          NewMailAccountProvisioner(null, {
+            success: true,
+            search_engine: this.params.searchEngine,
+          });
+        } catch (e) {
+          dump(e+"\n");
+          dump(e.stack+"\n");
+        }
       }
     }
   },
