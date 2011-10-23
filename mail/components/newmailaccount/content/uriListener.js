@@ -84,7 +84,6 @@ AccountProvisionerListener.prototype = {
                            /* in nsIRequest */ aRequest,
                            /* in unsigned long */ aStateFlags,
                            /* in nsresult */ aStatus) {
-    return;
     // This is the earliest notification we get...
     if ((aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_TRANSFERRING) &&
         (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_REQUEST)) {
