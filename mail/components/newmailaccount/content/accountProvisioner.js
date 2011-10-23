@@ -279,7 +279,7 @@ $(function() {
       let foundUserLang = 0;
       if (data && data.length) {
         for each (let [i, provider] in Iterator(data)) {
-          if (!provider.succeeded || provider.addresses.length <= 0)
+          if (!provider.succeeded || provider.addresses.length <= 0 || !(provider.provider in providers))
             continue;
           searchingFailed = false;
           let group = $("<div class='resultsGroup'></div>");
