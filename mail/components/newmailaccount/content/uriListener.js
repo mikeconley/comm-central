@@ -117,6 +117,8 @@ AccountProvisionerListener.prototype = {
               accountCreationFuncs.replaceVariables(accountConfig,
                 self.params.realName,
                 self.params.email);
+              accountConfig.rememberPassword = true;
+              accountConfig.incoming.password = (xml..incomingServer..password)[0];
               accountCreationFuncs.createAccountInBackend(accountConfig);
               NewMailAccountProvisioner(null, {
                 success: true,
