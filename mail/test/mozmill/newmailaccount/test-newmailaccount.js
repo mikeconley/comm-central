@@ -43,7 +43,7 @@ var Cu = Components.utils;
 var Cc = Components.classes;
 var Ci = Components.interfaces;
 
-var MODULE_NAME = 'test-get-an-account';
+var MODULE_NAME = 'test-newmailaccount';
 
 var RELATIVE_ROOT = '../shared-modules';
 var MODULE_REQUIRES = ['folder-display-helpers', 'content-tab-helpers'];
@@ -61,11 +61,11 @@ Cu.import("resource:///modules/mailServices.js");
 // so we get the right path for the resources.
 // Note: this one adds to '' as we need to make sure that favicon.ico is in the
 // root directory.
-var url = collector.addHttpResource('../get-an-account/html', '');
-Services.prefs.setCharPref("getanaccount.providerList", url + "providerList");
-Services.prefs.setCharPref("getanaccount.suggestFromName", url + "suggestFromName");
+var url = collector.addHttpResource('../newmailaccount/html', '');
+Services.prefs.setCharPref("mail.provider.providerList", url + "providerList");
+Services.prefs.setCharPref("mail.provider.suggestFromName", url + "suggestFromName");
 
-const kProvisionerUrl = "chrome://messenger/content/getanaccount/accountProvisioner.xhtml";
+const kProvisionerUrl = "chrome://messenger/content/newmailaccount/accountProvisioner.xhtml";
 
 var setupModule = function(module) {
   let fdh = collector.getModule('folder-display-helpers');

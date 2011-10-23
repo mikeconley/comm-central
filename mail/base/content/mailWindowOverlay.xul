@@ -84,7 +84,7 @@
 <script type="application/javascript" src="chrome://messenger/content/msgViewPickerOverlay.js"/>
 <script type="application/javascript" src="chrome://messenger/content/plugins.js"/>
 <script type="application/javascript" src="chrome://global/content/viewZoomOverlay.js"/>
-<script type="text/javascript;version=1.8" src="chrome://messenger/content/getanaccount/uriListener.js" />
+<script type="text/javascript;version=1.8" src="chrome://messenger/content/newmailaccount/uriListener.js" />
 
 <stringbundleset id="stringbundleset">
   <stringbundle id="bundle_messenger" src="chrome://messenger/locale/messenger.properties"/>

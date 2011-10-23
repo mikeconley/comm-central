@@ -158,7 +158,7 @@ input[type="submit"].search {
 
 #search #Name {
   padding-left: 24px;
-  background-image: url("chrome://messenger/content/getanaccount/search.gif");
+  background-image: url("chrome://messenger/content/newmailaccount/search.gif");
   background-position: 5px center;
   background-repeat: no-repeat;
 }

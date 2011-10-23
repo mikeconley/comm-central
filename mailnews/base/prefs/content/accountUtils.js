@@ -359,7 +359,7 @@ function NewMailAccountProvisioner(aMsgWindow, args) {
     args.success = false;
 
   window.openDialog(
-    "chrome://messenger/content/getanaccount/accountProvisioner.xhtml",
+    "chrome://messenger/content/newmailaccount/accountProvisioner.xhtml",
     "AccountSetup",
     // disabling modal for the time being, see 688273 REMOVEME
     "chrome,titlebar,centerscreen,width=640,height=480",

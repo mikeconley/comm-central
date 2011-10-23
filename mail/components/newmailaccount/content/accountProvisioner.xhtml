@@ -1,5 +1,5 @@
 <!DOCTYPE html [
-  <!ENTITY % mainDTD SYSTEM "chrome://messenger/locale/getanaccount/accountProvisioner.dtd"> %mainDTD;
+  <!ENTITY % mainDTD SYSTEM "chrome://messenger/locale/newmailaccount/accountProvisioner.dtd"> %mainDTD;
 ]>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -49,7 +49,7 @@
   <title>&window.title;</title>
   <link rel="stylesheet"
         type="text/css"
-        href="chrome://messenger/content/getanaccount/accountProvisioner.css" />
+        href="chrome://messenger/content/newmailaccount/accountProvisioner.css" />
 
   <script type="text/javascript;version=1.8"
           src="chrome://messenger/content/jquery.js">
@@ -76,16 +76,13 @@
           src="chrome://communicator/content/utilityOverlay.js">
   </script>
   <script type="text/javascript;version=1.8"
-          src="chrome://messenger/content/getanaccount/jquery.dump.js">
+          src="chrome://messenger/content/newmailaccount/jquery.scrollTo.js">
   </script>
   <script type="text/javascript;version=1.8"
-          src="chrome://messenger/content/getanaccount/jquery.scrollTo.js">
+          src="chrome://messenger/content/newmailaccount/jquery.tmpl.js">
   </script>
   <script type="text/javascript;version=1.8"
-          src="chrome://messenger/content/getanaccount/jquery.tmpl.js">
-  </script>
-  <script type="text/javascript;version=1.8"
-          src="chrome://messenger/content/getanaccount/accountProvisioner.js">
+          src="chrome://messenger/content/newmailaccount/accountProvisioner.js">
   </script>
 </head>
 <body>
@@ -109,7 +106,7 @@
       <div id="notifications">
 
         <img class="spinner"
-             src="chrome://messenger/content/getanaccount/spinner.gif"/>
+             src="chrome://messenger/content/newmailaccount/spinner.gif"/>
 
         <div class="error">
           <p>&error.line1;</p>
@@ -174,7 +171,7 @@
     <h2>&search_engine.title;</h2>
     <div>&search_engine.message;</div>
     <div id="search_engine_wrap">
-      <img src="chrome://messenger/content/getanaccount/search.png"/>
+      <img src="chrome://messenger/content/newmailaccount/search.png"/>
       <input type="checkbox" id="search_engine_check" />
       <span id="search_engine_desc"></span>
     </div>
@@ -186,19 +183,19 @@
     <div id="success-message">&successful.successMessage;</div>
 
     <div id="success-compose">
-    <img src="chrome://messenger/content/getanaccount/success-compose.png"/>
+    <img src="chrome://messenger/content/newmailaccount/success-compose.png"/>
     <h4>&successful.write;</h4>
     &successful.write.desc;
     </div>
 
     <div id="success-addons">
-    <img src="chrome://messenger/content/getanaccount/success-addons.png"/>
+    <img src="chrome://messenger/content/newmailaccount/success-addons.png"/>
     <h4>&successful.customize;</h4>
     &successful.customize.desc;
     </div>
 
     <div id="success-signature">
-    <img src="chrome://messenger/content/getanaccount/success-signature.png"/>
+    <img src="chrome://messenger/content/newmailaccount/success-signature.png"/>
     <h4>&successful.attach;</h4>
     &successful.attach.desc;
     </div>

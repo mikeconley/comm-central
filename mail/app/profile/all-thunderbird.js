@@ -726,9 +726,8 @@ pref("mail.taskbar.lists.tasks.enabled", true);
 #endif
 
 // Account provisioner. Commented out prefs are for "the real world".
-// pref("getanaccount.providerList", "https://broker-live.mozillamessaging.com/provider/list");
-pref("getanaccount.providerList", "http://bwinton.latte.ca/Work/provider/list");
-pref("getanaccount.logUrl", "https://broker-live.mozillamessaging.com/provider/log");
-// pref("getanaccount.suggestFromName", "https://broker-live.mozillamessaging.com/provider/hover/suggest");
-pref("getanaccount.suggestFromName", "http://bwinton.latte.ca/Work/provider/suggestFromName.cgi");
+// pref("mail.provider.providerList", "https://broker-live.mozillamessaging.com/provider/list");
+pref("mail.provider.providerList", "http://bwinton.latte.ca/Work/provider/list");
+// pref("mail.provider.suggestFromName", "https://broker-live.mozillamessaging.com/provider/hover/suggest");
+pref("mail.provider.suggestFromName", "http://bwinton.latte.ca/Work/provider/suggestFromName.cgi");
 

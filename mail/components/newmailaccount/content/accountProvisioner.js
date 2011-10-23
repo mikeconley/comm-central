@@ -46,7 +46,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/NetUtil.jsm");
 Cu.import("resource:///modules/StringBundle.js");
 
-let stringBundle = new StringBundle("chrome://messenger/locale/getanaccount/accountProvisioner.properties");
+let stringBundle = new StringBundle("chrome://messenger/locale/newmailaccount/accountProvisioner.properties");
 
 /**
  * Get the localstorage for this page in a way that works in chrome.
@@ -107,29 +107,7 @@ const MAX_SMALL_ADDRESSES = 2;
 
 var storedData = {};
 var providers = {};
-var actionList = [];
 var account = {};
-
-
-/**
- * Log a successful account creation, if we have a log url for that provider.
- *
- * @param provider The provider we created the account for.
- * @param config The created config.
- */
-function logSuccess(provider, config) {
-  let providerLogUrl = providers[provider].log_url;
-  if (providerLogUrl) {
-    let data = {success: "true",
-                config: config };
-    $.ajax({url: providerLogUrl,
-            type: "POST",
-            dataType: "json",
-            processData: false,
-            contentType: "text/json",
-            data: JSON.stringify(data)});
-  };
-}
 
 /**
  * Expand the New or Existing account section.
@@ -179,7 +157,6 @@ $(function() {
   let msgWindow = window.arguments[0].msgWindow;
   let okCallback = window.arguments[0].okCallback;
 
-  actionList.push("Starting");
   window.storage = getLocalStorage("accountProvisioner");
   let opener = Cc["@mozilla.org/uriloader/external-protocol-service;1"]
                          .getService(Ci.nsIExternalProtocolService);
@@ -190,9 +167,8 @@ $(function() {
   });
 
   let prefs = Services.prefs;
-  let providerList = prefs.getCharPref("getanaccount.providerList");
-  let suggestFromName = prefs.getCharPref("getanaccount.suggestFromName");
-  let logUrl = prefs.getCharPref("getanaccount.logUrl");
+  let providerList = prefs.getCharPref("mail.provider.providerList");
+  let suggestFromName = prefs.getCharPref("mail.provider.suggestFromName");
 
   let commentary = $(".commentary")
     .append($("<span>"+stringBundle.get("disclaimer")+"</span>"));
@@ -241,7 +217,6 @@ $(function() {
   });
 
   $("button.existing").click(function() {
-    actionList.push("Using Existing");
     saveState();
     NewMailAccount(msgWindow, okCallback, window.arguments[0]);
     // Set the callback to null, so that we don't call it.
@@ -264,17 +239,6 @@ $(function() {
   });
 
   $(window).unload(function() {
-    actionList.push("Closing");
-    Application.console.log("Logging actions of " +
-                            JSON.stringify(actionList) + ".");
-    $.ajax({url: logUrl,
-            async: false, // We need this to finish before we close the page.
-            type: "POST",
-            dataType: "json",
-            processData: false,
-            contentType: "text/json",
-            data: JSON.stringify(actionList)});
-    actionList = [];
     if (okCallback)
       okCallback();
   });
@@ -293,7 +257,6 @@ $(function() {
 
   $(".search").click(function() {
     $(".search").attr("disabled", "disabled");
-    actionList.push("Searching");
     $("#notifications").children().hide();
     saveState();
     let name = $("#Name").val();
@@ -315,7 +278,6 @@ $(function() {
 
       let foundUserLang = 0;
       if (data && data.length) {
-        actionList.push("Searching successful");
         $("#FirstAndLastName").text(firstname + " " + lastname);
         for each (let [i, provider] in Iterator(data)) {
           if (!provider.succeeded || provider.addresses.length <= 0)
@@ -380,7 +342,6 @@ $(function() {
         }
       }
       if (searchingFailed) {
-        actionList.push("Searching failed");
         // Figure out what to do if it failed.
         $("#notifications").children().hide();
         $("#notifications .error").fadeIn();
@@ -389,7 +350,6 @@ $(function() {
   });
 
   $("#notifications").delegate("button.create", "click", function() {
-    actionList.push("Creating");
     let provider = providers[$(this).data("provider")];
 
     // Replace the variables in the url.
@@ -460,7 +420,6 @@ $(function() {
   });
 
   $("#back").click(function() {
-    actionList.push("Going back");
     $("#Name").val($("#account\\.first_name").val() + " " + $("#account\\.last_name").val());
     $("#window").css("height", window.innerHeight - 1);
     $("#content .description").show();
@@ -500,20 +459,16 @@ $(function() {
   }
 
   $("#success-compose").click(function() {
-    actionList.push("Compose");
     NewComposeMessage(Components.interfaces.nsIMsgCompType.New);
     window.close();
   });
 
   $("#success-addons").click(function() {
-    actionList.push("Addons");
     openAddonsMgr();
     window.close();
   });
 
   $("#success-signature").click(function() {
-    actionList.push("Signature");
-
     var existingAccountManager =
       Services.wm.getMostRecentWindow("mailnews:accountmanager");
 
