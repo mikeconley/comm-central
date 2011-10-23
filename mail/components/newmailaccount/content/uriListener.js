@@ -58,7 +58,6 @@ Services.scriptloader.loadSubScript("chrome://messenger/content/accountcreation/
 Services.scriptloader.loadSubScript("chrome://messenger/content/accountcreation/sanitizeDatatypes.js", accountCreationFuncs);
 Services.scriptloader.loadSubScript("chrome://messenger/content/accountcreation/fetchhttp.js", accountCreationFuncs);
 Services.scriptloader.loadSubScript("chrome://messenger/content/accountcreation/readFromXML.js", accountCreationFuncs);
-Services.scriptloader.loadSubScript("chrome://messenger/content/accountcreation/guessConfig.js", accountCreationFuncs);
 Services.scriptloader.loadSubScript("chrome://messenger/content/accountcreation/verifyConfig.js", accountCreationFuncs);
 Services.scriptloader.loadSubScript("chrome://messenger/content/accountcreation/fetchConfig.js", accountCreationFuncs);
 Services.scriptloader.loadSubScript("chrome://messenger/content/accountcreation/createInBackend.js", accountCreationFuncs);
@@ -84,11 +83,13 @@ AccountProvisionerListener.prototype = {
                            /* in nsIRequest */ aRequest,
                            /* in unsigned long */ aStateFlags,
                            /* in nsresult */ aStatus) {
+    dump(aStateFlags+"\n");
     // This is the earliest notification we get...
     if ((aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_TRANSFERRING) &&
         (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_REQUEST)) {
       let channel = aRequest.QueryInterface(Ci.nsIHttpChannel);
       let contentType = channel.getResponseHeader("Content-Type");
+      dump(contentType+"\n");
       if (contentType == "text/xml") {
         // Stop the request so that the user doesn't see the XML, and close the
         // content tab while we're at it.
@@ -117,8 +118,7 @@ AccountProvisionerListener.prototype = {
             search_engine: this.params.searchEngine,
           });
         } catch (e) {
-          dump(e+"\n");
-          dump(e.stack+"\n");
+          Components.utils.reportError(e);
         }
       }
     }

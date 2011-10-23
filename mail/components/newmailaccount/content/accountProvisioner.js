@@ -48,6 +48,11 @@ Cu.import("resource:///modules/StringBundle.js");
 
 let stringBundle = new StringBundle("chrome://messenger/locale/newmailaccount/accountProvisioner.properties");
 
+let isOSX = ("nsILocalFileMac" in Ci);
+let isWindows = ("@mozilla.org/windows-registry-key;1" in Cc);
+
+function isAccel (event) (isOSX && event.metaKey || event.ctrlKey)
+
 /**
  * Get the localstorage for this page in a way that works in chrome.
  *
@@ -74,7 +79,7 @@ function getLocalStorage(page) {
  * later.
  */
 function saveState() {
-  var name = $("#Name").val();
+  var name = String.trim($("#name").val());
   var username = $("#username").val();
   var domain = $("#provider").find(":selected").attr("domain");
 
@@ -143,7 +148,7 @@ function expandSection(existing) {
 
 function splitName(str) {
   let i = str.lastIndexOf(" ");
-  if (i >= 0)
+  if (i >= 1)
     return [str.substring(0, i), str.substring(i+1)];
   else
     return [str, ""];
@@ -201,10 +206,10 @@ $(function() {
         .append($("<span />").text(")"+sep));
     };
   });
-  let name = storage.getItem("name") || $("#Name").text();
+  let name = storage.getItem("name") || $("#name").text();
   let username = storage.getItem("username");
   let domain = storage.getItem("domain");
-  $("#Name").val(name);
+  $("#name").val(name);
   saveState();
 
   let metaKey = false;
@@ -243,25 +248,20 @@ $(function() {
       okCallback();
   });
 
-  $(window).keydown(function(e) {
-    // Handle Cmd-W.
-    if (e.keyCode == "224") {
-      metaKey = true;
-    } else if (e.keyCode == "87" && ((e.ctrlKey && !e.altKey) || metaKey)) {
+  $(window).keypress(function(event) {
+    if (event.which == "119" && isAccel(event)) {
       // Handle Ctrl-W.
       window.close();
-    } else {
-      metaKey = false;
     }
-  }).trigger("keydown");
+  });
 
   $(".search").click(function() {
     $(".search").attr("disabled", "disabled");
     $("#notifications").children().hide();
     saveState();
-    let name = $("#Name").val();
+    let name = String.trim($("#name").val());
     if (name.length <= 0) {
-      $("#Name").select().focus();
+      $("#name").select().focus();
       $(".search").removeAttr("disabled");
       return;
     }
@@ -278,10 +278,9 @@ $(function() {
 
       let foundUserLang = 0;
       if (data && data.length) {
-        $("#FirstAndLastName").text(firstname + " " + lastname);
         for each (let [i, provider] in Iterator(data)) {
           if (!provider.succeeded || provider.addresses.length <= 0)
-            continue
+            continue;
           searchingFailed = false;
           let group = $("<div class='resultsGroup'></div>");
           let header = $("#resultsHeader").clone().removeClass("displayNone");
@@ -354,7 +353,7 @@ $(function() {
 
     // Replace the variables in the url.
     let url = provider.api;
-    let [firstName, lastName] = splitName($("#Name").val());
+    let [firstName, lastName] = splitName(String.trim($("#name").val()));
     let email = $(this).attr("address");
     url = url.replace("{firstname}", firstName);
     url = url.replace("{lastname}", lastName);
@@ -399,28 +398,29 @@ $(function() {
   // The code is smart enough to work for both selectors.
   $("#results").delegate("div.more, div.address", "click", function() {
     let self = $(this);
+    let resultsGroup = self.closest(".resultsGroup");
 
     // Return if we're already expanded
-    if (self.parent().parent().hasClass("expanded"))
+    if (resultsGroup.hasClass("expanded"))
       return;
-    self.parent().parent().siblings().removeClass("expanded");
-    self.parent().parent().addClass("expanded");
+    resultsGroup.siblings().removeClass("expanded");
+    resultsGroup.addClass("expanded");
 
     // Hide the other boxes.
-    self.parent().parent().siblings().children(".extra").slideUp();
-    self.parent().parent().siblings().find(".more").show();
-    self.parent().parent().siblings().find(".pricing").fadeOut("fast");
-    self.parent().parent().siblings().find(".price").fadeIn("fast");
+    resultsGroup.siblings().children(".extra").slideUp();
+    resultsGroup.siblings().find(".more").show();
+    resultsGroup.siblings().find(".pricing").fadeOut("fast");
+    resultsGroup.siblings().find(".price").fadeIn("fast");
 
     // And show this box.
-    self.parent().parent().find(".more").hide();
+    resultsGroup.find(".more").hide();
+    resultsGroup.children().find(".pricing").fadeIn("fast");
     self.parent().siblings(".extra").slideDown();
-    self.parent().parent().children().find(".pricing").fadeIn("fast");
     self.parent().siblings().find(".price").fadeOut("fast");
   });
 
   $("#back").click(function() {
-    $("#Name").val($("#account\\.first_name").val() + " " + $("#account\\.last_name").val());
+    $("#name").val($("#account\\.first_name").val() + " " + $("#account\\.last_name").val());
     $("#window").css("height", window.innerHeight - 1);
     $("#content .description").show();
     $("button.create").show();
@@ -440,7 +440,6 @@ $(function() {
   if (window.arguments[0].search_engine) {
     let engine = window.arguments[0].search_engine;
     $("#window").hide();
-    $("#search_engine_page").show();
     $("#search_engine_next").click(function () {
       if ($("#search_engine_check").prop("checked")) {
         Services.prefs.setCharPref("mail.websearch.engine", engine);
@@ -449,10 +448,16 @@ $(function() {
       $("#successful_account").show();
     });
 
-    let isChecked = (getCurrentSearchEngine() == getDefaultSearchEngine())
-      || (getCurrentSearchEngine() == engine);
-    $("#search_engine_check").prop("checked", isChecked);
-    $("#search_engine_desc").html(stringBundle.get("searchDesc", [engine]));
+    if (getCurrentSearchEngine() == engine) {
+      // Skip this page if the search engine is already the right one.
+      $("#successful_account").show();
+    } else {
+      // Otherwise, proceed with the dialog.
+      let isChecked = (getCurrentSearchEngine() == getDefaultSearchEngine());
+      $("#search_engine_check").prop("checked", isChecked);
+      $("#search_engine_desc").html(stringBundle.get("searchDesc", [engine]));
+      $("#search_engine_page").show();
+    }
   } else if (window.arguments[0].success) {
     $("#window").hide();
     $("#successful_account").show();

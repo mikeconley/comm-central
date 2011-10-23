@@ -59,8 +59,6 @@ Cu.import("resource:///modules/mailServices.js");
 
 // RELATIVE_ROOT messes with the collector, so we have to bring the path back
 // so we get the right path for the resources.
-// Note: this one adds to '' as we need to make sure that favicon.ico is in the
-// root directory.
 var url = collector.addHttpResource('../newmailaccount/html', '');
 Services.prefs.setCharPref("mail.provider.providerList", url + "providerList");
 Services.prefs.setCharPref("mail.provider.suggestFromName", url + "suggestFromName");
@@ -110,7 +108,7 @@ function test_get_an_account() {
 
   // Fill in some data
   let $ = w.$;
-  $("#Name").val("Green Llama");
+  $("#name").val("Green Llama");
   $(".search").click();
   mc.waitFor(function () $("#results").children().length > 0);
 
@@ -138,7 +136,4 @@ function test_get_an_account() {
   w = wait_for_provisioner_window();
   $ = w.$;
   assert_equals(nAccounts(), i + 1);
-
-  // W00t account created
-  dump("\033[01;36m#winning\033[00m\n");
 }
