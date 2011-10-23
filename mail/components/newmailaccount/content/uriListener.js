@@ -83,13 +83,11 @@ AccountProvisionerListener.prototype = {
                            /* in nsIRequest */ aRequest,
                            /* in unsigned long */ aStateFlags,
                            /* in nsresult */ aStatus) {
-    dump(aStateFlags+"\n");
     // This is the earliest notification we get...
     if ((aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_TRANSFERRING) &&
         (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_IS_REQUEST)) {
       let channel = aRequest.QueryInterface(Ci.nsIHttpChannel);
       let contentType = channel.getResponseHeader("Content-Type");
-      dump(contentType+"\n");
       if (contentType == "text/xml") {
         // Stop the request so that the user doesn't see the XML, and close the
         // content tab while we're at it.
@@ -104,22 +102,41 @@ AccountProvisionerListener.prototype = {
         aRequest.QueryInterface(Ci.nsIChannel);
         let url = aRequest.URI;
         let newChannel = NetUtil.newChannel(url);
-        let inputStream = newChannel.open(); // asyncOpen here?
-        let str = NetUtil.readInputStreamToString(inputStream, inputStream.available());
-        try {
-          let xml = new XML(str);
-          let accountConfig = accountCreationFuncs.readFromXML(xml);
-          accountCreationFuncs.replaceVariables(accountConfig,
-            this.params.realName,
-            this.params.email);
-          accountCreationFuncs.createAccountInBackend(accountConfig);
-          NewMailAccountProvisioner(null, {
-            success: true,
-            search_engine: this.params.searchEngine,
-          });
-        } catch (e) {
-          Components.utils.reportError(e);
-        }
+        let chunks = [];
+        let self = this;
+        let inputStream = newChannel.asyncOpen({
+
+          onStartRequest: function (/* nsIRequest */ aRequest, /* nsISupports */ aContext) {
+          },
+
+          onStopRequest: function (/* nsIRequest */ aRequest, /* nsISupports */ aContext, /* int */ aStatusCode) {
+            try {
+              let data = chunks.join("");
+              let xml = new XML(data);
+              let accountConfig = accountCreationFuncs.readFromXML(xml);
+              accountCreationFuncs.replaceVariables(accountConfig,
+                self.params.realName,
+                self.params.email);
+              accountCreationFuncs.createAccountInBackend(accountConfig);
+              NewMailAccountProvisioner(null, {
+                success: true,
+                search_engine: self.params.searchEngine,
+              });
+            } catch (e) {
+              Components.utils.reportError(e);
+            }
+          },
+
+          onDataAvailable: function (/* nsIRequest */ aRequest, /* nsISupports */ aContext,
+            /* nsIInputStream */ aStream, /* int */ aOffset, /* int */ aCount) {
+            let str = NetUtil.readInputStreamToString(aStream, aCount);
+            chunks.push(str);
+          },
+
+          QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports, Ci.nsIStreamListener,
+            Ci.nsIRequestObserver])
+
+        }, null);
       }
     }
   },
