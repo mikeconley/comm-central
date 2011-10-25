@@ -278,6 +278,7 @@ $(function() {
 
       let foundUserLang = 0;
       if (data && data.length) {
+        $("#FirstAndLastName").text(firstname + " " + lastname);
         for each (let [i, provider] in Iterator(data)) {
           if (!provider.succeeded || provider.addresses.length <= 0 || !(provider.provider in providers))
             continue;
