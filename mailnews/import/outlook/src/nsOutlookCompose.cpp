@@ -47,8 +47,6 @@
 #include "nsIServiceManager.h"
 #include "nsIIOService.h"
 #include "nsIURI.h"
-#include "nsIProxyObjectManager.h"
-#include "nsProxiedService.h"
 #include "nsMsgI18N.h"
 #include "nsNativeCharsetUtils.h"
 #include "nsIOutputStream.h"
@@ -119,7 +117,7 @@ public:
   // convertCRs controls if we want to convert standalone CRs to CRLFs
   CCompositionFile(nsIFile* aFile, void* fifoBuffer, PRUint32 fifoBufferSize, bool convertCRs=false);
 
-  operator bool() const { return m_fileSize; }
+  operator bool() const { return m_fileSize && m_pInputStream; }
 
   // Reads up to and including the term sequence, or entire file if term isn't found
   // termSize may be used to include NULLs in the terminator sequences.
@@ -251,15 +249,16 @@ void nsOutlookCompose::ClearReplaceCids()
   m_replacedCids.clear();
 }
 
+nsIMsgIdentity * nsOutlookCompose::m_pIdentity = nsnull;
+
 nsresult nsOutlookCompose::CreateIdentity( void)
 {
   if (m_pIdentity)
     return NS_OK;
 
   nsresult rv;
-  NS_WITH_PROXIED_SERVICE(nsIMsgAccountManager, accMgr,
-                          NS_MSGACCOUNTMANAGER_CONTRACTID,
-                          NS_PROXY_TO_MAIN_THREAD, &rv);
+  nsCOMPtr<nsIMsgAccountManager> accMgr =
+    do_GetService(NS_MSGACCOUNTMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = accMgr->CreateIdentity(&m_pIdentity);
   nsString name;
@@ -269,8 +268,12 @@ nsresult nsOutlookCompose::CreateIdentity( void)
     m_pIdentity->SetIdentityName(name);
     m_pIdentity->SetEmail(NS_LITERAL_CSTRING("import@import.service"));
   }
-
   return rv;
+}
+
+void nsOutlookCompose::ReleaseIdentity()
+{
+  NS_IF_RELEASE(m_pIdentity);
 }
 
 nsresult nsOutlookCompose::CreateComponents( void)
@@ -739,7 +742,7 @@ bool nsOutlookCompose::GenerateHackSequence(const wchar_t* body, size_t origLen)
 
 CCompositionFile::CCompositionFile(nsIFile* aFile, void* fifoBuffer,
                                    PRUint32 fifoBufferSize, bool convertCRs)
-  : m_pFile(aFile), m_fileReadPos(0),
+  : m_pFile(aFile), m_fileSize(0), m_fileReadPos(0),
     m_fifoBuffer(static_cast<char*>(fifoBuffer)),
     m_fifoBufferSize(fifoBufferSize),
     m_fifoBufferReadPos(static_cast<char*>(fifoBuffer)),
