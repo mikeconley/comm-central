@@ -189,6 +189,7 @@ pref("browser.urlbar.restrict.typed", "~");
 pref("browser.urlbar.match.title", "#");
 pref("browser.urlbar.match.url", "@");
 
+pref("browser.history.last_page_visited", "about:blank");
 pref("browser.history.grouping", "day");
 pref("browser.sessionhistory.max_entries", 50);
 
@@ -570,6 +571,11 @@ pref("extensions.update.enabled", true);
 pref("extensions.update.url", "https://versioncheck.addons.mozilla.org/update/VersionCheck.php?reqVersion=%REQ_VERSION%&id=%ITEM_ID%&version=%ITEM_VERSION%&maxAppVersion=%ITEM_MAXAPPVERSION%&status=%ITEM_STATUS%&appID=%APP_ID%&appVersion=%APP_VERSION%&appOS=%APP_OS%&appABI=%APP_ABI%&locale=%APP_LOCALE%&currentAppVersion=%CURRENT_APP_VERSION%&updateType=%UPDATE_TYPE%");
 pref("extensions.update.interval", 86400);         // Check daily for updates to add-ons
 pref("extensions.update.autoUpdateDefault", true); // Download and install automatically
+
+// Disable add-ons installed into the shared user and shared system areas by
+// default. This does not include the application directory. See the SCOPE
+// constants in AddonManager.jsm for values to use here.
+pref("extensions.autoDisableScopes", 15);
 
 // Preferences for AMO integration
 pref("extensions.getAddons.cache.enabled", true);  // also toggles personalized recommendations

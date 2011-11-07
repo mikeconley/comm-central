@@ -4498,7 +4498,6 @@ MOZ_INSTALLER=1
 MOZ_IPC=1
 MOZ_JSDEBUGGER=1
 MOZ_LDAP_XPCOM=
-MOZ_MAIL_NEWS=
 MOZ_MORK=
 MOZ_MORKREADER=1
 MOZ_AUTH_EXTENSION=1
@@ -4843,15 +4842,6 @@ MOZ_ARG_ENABLE_BOOL(calendar,
     MOZ_CALENDAR=1,
     MOZ_CALENDAR= )
 AC_SUBST(MOZ_CALENDAR)
-
-dnl =========================================================
-dnl = Mail & News
-dnl =========================================================
-MOZ_ARG_DISABLE_BOOL(mailnews,
-[  --disable-mailnews      Disable building of mail & news components],
-    MOZ_MAIL_NEWS=,
-    MOZ_MAIL_NEWS=1 )
-AC_SUBST(MOZ_MAIL_NEWS)
 
 dnl =========================================================
 dnl = LDAP
@@ -5923,11 +5913,13 @@ if test "$MOZ_MEMORY"; then
     lib -NOLOGO -OUT:crtdll.obj $WIN32_CRT_LIBS -EXTRACT:$WIN32_CRTDLL_FULLPATH
     if grep -q '__imp__\{0,1\}free' crtdll.obj; then
       MOZ_UTILS_LDFLAGS='-LIBPATH:$(DIST)/lib -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd -NODEFAULTLIB:msvcprt -NODEFAULTLIB:msvcprtd -DEFAULTLIB:mozcrt'
+      dnl Also pass this to NSPR/NSS
+      DLLFLAGS="$DLLFLAGS $MOZ_UTILS_LDFLAGS"
+    else
+      DLLFLAGS="$DLLFLAGS -LIBPATH:\$(DIST)/lib -DEFAULTLIB:mozutils"
     fi
     rm crtdll.obj
 
-    dnl Also pass this to NSPR/NSS
-    DLLFLAGS="$DLLFLAGS $MOZ_UTILS_LDFLAGS"
     export DLLFLAGS
     ;;
   *-android*)
@@ -6752,13 +6744,6 @@ fi
 dnl ========================================================
 if test "$MOZ_DEBUG" -o "$NS_TRACE_MALLOC"; then
     MOZ_COMPONENTS_VERSION_SCRIPT_LDFLAGS=
-fi
-
-if test -z "$MOZ_MAIL_NEWS"; then
-    MAIL_COMPONENT=
-    export MAIL_COMPONENT
-    MAIL_MODULE=
-    export MAIL_MODULE
 fi
 
 if test "$MOZ_LDAP_XPCOM"; then
