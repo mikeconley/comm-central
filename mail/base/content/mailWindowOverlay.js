@@ -97,10 +97,15 @@ var gMarkViewedMessageAsReadTimer = null;
 var gDisallow_classes_no_html = 1;
 
 // Disable the new account menu item if the account preference is locked.
-// Two other affected areas are the account central and the account manager
-// dialog.
+// The other affected areas are the account central, the account manager
+// dialog, and the account provisioner window.
 function menu_new_init()
 {
+  // If the account provisioner is pref'd off, we shouldn't display the menu
+  // item.
+  ShowMenuItem("newCreateEmailAccountMenuItem",
+               gPrefBranch.getBoolPref("mail.provider.enabled"));
+
   // If we don't have a gFolderDisplay, just get out of here and leave the menu
   // as it is.
   if (!gFolderDisplay)
@@ -365,7 +370,9 @@ function InitMessageMenu()
   document.getElementById("moveMenu").disabled = !canMove;
 
   // Also disable copy when no folder is loaded (like for .eml files).
-  document.getElementById("copyMenu").disabled = !messageStoredInternally;
+  let canCopy = selectedMsg && (!gMessageDisplay.isDummy ||
+                                window.arguments[0].scheme == "file");
+  document.getElementById("copyMenu").disabled = !canCopy;
 
   initMoveToFolderAgainMenu(document.getElementById("moveToFolderAgain"));
 
@@ -1291,7 +1298,16 @@ function MsgDeleteMessage(reallyDelete, fromToolbar)
  */
 function MsgCopyMessage(aDestFolder)
 {
-  gDBView.doCommandWithFolder(nsMsgViewCommandType.copyMessages, aDestFolder);
+  if (gMessageDisplay.isDummy) {
+    let file = window.arguments[0].QueryInterface(Components.interfaces
+                                                            .nsIFileURL).file;
+    MailServices.copy.CopyFileMessage(file, aDestFolder, null, false,
+                                      Components.interfaces.nsMsgMessageFlags.Read,
+                                      "", null, msgWindow);
+  }
+  else
+    gDBView.doCommandWithFolder(nsMsgViewCommandType.copyMessages, aDestFolder);
+
   pref.setCharPref("mail.last_msg_movecopy_target_uri", aDestFolder.URI);
   pref.setBoolPref("mail.last_msg_movecopy_was_move", false);
 }
