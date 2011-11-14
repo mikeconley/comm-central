@@ -274,8 +274,11 @@ function onViewToolbarCommand(aEvent, toolboxId)
   document.persist(toolbar.id, hidingAttribute);
 }
 
-function onViewToolbarsPopupShowing(aEvent, toolboxId)
+function onViewToolbarsPopupShowing(aEvent, toolboxIds)
 {
+  if (!Array.isArray(toolboxIds))
+    toolboxIds = [toolboxIds];
+
   var popup = aEvent.target;
 
   // Empty the menu
@@ -287,25 +290,29 @@ function onViewToolbarsPopupShowing(aEvent, toolboxId)
 
   var firstMenuItem = popup.firstChild;
 
-  var toolbox = document.getElementById(toolboxId);
-  for (var i = 0; i < toolbox.childNodes.length; ++i) {
-    var toolbar = toolbox.childNodes[i];
-    var toolbarName = toolbar.getAttribute("toolbarname");
-    if (toolbarName) {
-      let menuItem = document.createElement("menuitem");
-      let hidingAttribute = toolbar.getAttribute("type") == "menubar" ?
-                            "autohide" : "collapsed";
-      menuItem.setAttribute("toolbarindex", i);
-      menuItem.setAttribute("type", "checkbox");
-      menuItem.setAttribute("label", toolbarName);
-      menuItem.setAttribute("accesskey", toolbar.getAttribute("accesskey"));
-      menuItem.setAttribute("checked", toolbar.getAttribute(hidingAttribute) != "true");
-      popup.insertBefore(menuItem, firstMenuItem);
-      menuItem.addEventListener("command",
+  toolboxIds.forEach(function(toolboxId) {
+    var toolbox = document.getElementById(toolboxId);
+
+    for (var i = 0; i < toolbox.childNodes.length; ++i) {
+      var toolbar = toolbox.childNodes[i];
+
+      var toolbarName = toolbar.getAttribute("toolbarname");
+      if (toolbarName) {
+        let menuItem = document.createElement("menuitem");
+        let hidingAttribute = toolbar.getAttribute("type") == "menubar" ?
+                              "autohide" : "collapsed";
+        menuItem.setAttribute("toolbarindex", i);
+        menuItem.setAttribute("type", "checkbox");
+        menuItem.setAttribute("label", toolbarName);
+        menuItem.setAttribute("accesskey", toolbar.getAttribute("accesskey"));
+        menuItem.setAttribute("checked", toolbar.getAttribute(hidingAttribute) != "true");
+        popup.insertBefore(menuItem, firstMenuItem);
+        menuItem.addEventListener("command",
         function(aEvent) { onViewToolbarCommand(aEvent, toolboxId); }, false);
+      }
+      toolbar = toolbar.nextSibling;
     }
-    toolbar = toolbar.nextSibling;
-  }
+  });
 }
 
 function toJavaScriptConsole()

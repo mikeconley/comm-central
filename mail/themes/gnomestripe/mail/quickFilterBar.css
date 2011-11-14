@@ -33,6 +33,7 @@ toolbar[iconsize="large"] #qfb-show-filter-bar[style="visibility: hidden;"] {
 
 #qfb-show-filter-bar > .toolbarbutton-icon {
   -moz-margin-end: 0;
+  padding: 1px 3px 2px;
 }
 
 /* ::::: QFB button on main toolbar ::::: */
@@ -56,6 +57,9 @@ toolbox[labelalign="end"] #qfb-show-filter-bar {
 }
 
 /* :::: Filter Buttons :::: */
+#quick-filter-bar {
+  -moz-appearance: toolbar;
+}
 
 #quick-filter-bar #qfb-sticky,
 #quick-filter-bar #qfb-sticky[checked] {

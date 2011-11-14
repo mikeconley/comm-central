@@ -46,15 +46,26 @@
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+#mail-toolbox {
+  margin-top: 0;
+  background-color: -moz-mac-chrome-active;
+  background-image: -moz-linear-gradient(bottom,rgba(0,0,0,.57),
+                    rgba(255,255,255,0) 1px,rgba(255,255,255,.2));
+}
+
 /* Inactive window state */
-#mail-toolbox > toolbar:-moz-window-inactive > toolbar {
-  border-top-color: rgba(255,255,255,0.45);
-  border-bottom-color: rgba(0,0,0,0.35);
+#mail-toolbox:-moz-window-inactive {
+  background-image: -moz-linear-gradient(bottom,rgba(0,0,0,0.32),
+                    rgba(255,255,255,0) 1px,rgba(255,255,255,.2));
   background-color: -moz-mac-chrome-inactive;
 }
 
 #mail-bar3 {
-  padding: 0 4px;
+  padding: 4px 4px 0;
+}
+
+#mail-toolbox > toolbar {
+  -moz-appearance: none;
 }
 
 /* ::::: primary toolbar buttons ::::: */
@@ -107,6 +118,13 @@ toolbox[labelalign="end"] toolbarpaletteitem
 toolbar[mode="text"] .toolbarbutton-1 > .toolbarbutton-text,
 toolbar[mode="text"] .toolbarbutton-menubutton-button > .toolbarbutton-text {
   margin: 5px 4px 3px;
+}
+
+#tabbar-toolbar .toolbarbutton-1 {
+  margin-top: 1px;
+  margin-bottom: 1px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 #button-getmsg {
@@ -748,6 +766,10 @@ toolbar[iconsize="small"] #button-archive[disabled] {
 }
 
 /* Lightweight themes support */
+
+#mail-toolbox:-moz-lwtheme {
+  background: none !important;
+}
 
 /* This prevent jumping of the toolbar when going between Default and Persona*/
 #mail-bar3  {

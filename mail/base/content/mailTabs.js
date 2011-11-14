@@ -99,7 +99,8 @@ let mailTabType = {
       legalPanes: {
         folder: true,
         thread: true,
-        message: true
+        message: true,
+        mailToolbox: true,
       },
       /// The set of panes that are legal when we are showing account central
       accountCentralLegalPanes: {
@@ -331,7 +332,8 @@ let mailTabType = {
       legalPanes: {
         folder: false,
         thread: false,
-        message: true
+        message: true,
+        mailToolbox: false,
       },
       openTab: function(aTab, aArgs) {
         this.openTab(aTab, false, new MessageTabDisplayWidget(), false);
@@ -419,6 +421,7 @@ let mailTabType = {
         folder: false,
         thread: true,
         message: true,
+        mailToolbox: false,
       },
       /**
        * The default set of columns to show.  This really should just be for
@@ -693,6 +696,9 @@ let mailTabType = {
     // -- message pane
     document.getElementById("messagepaneboxwrapper").collapsed =
       !aLegalStates.message || !aVisibleStates.message;
+
+    // -- mail toolbox
+    document.getElementById("mail-toolbox").collapsed = !displayDeckLegal;
 
     // we are responsible for updating the keybinding; view_init takes care of
     //  updating the menu item (on demand)

@@ -162,7 +162,7 @@
   <menupopup id="copyUrlPopup"/>
   <menupopup id="toolbar-context-menu"/>
 
-  <toolbox id="mail-toolbox" class="toolbox-top">
+  <toolbox id="navigation-toolbox" class="toolbox-top">
   </toolbox>
 
   <tooltip id="aHTMLTooltip" onpopupshowing="return FillInHTMLTooltip(document.tooltipNode);"/>

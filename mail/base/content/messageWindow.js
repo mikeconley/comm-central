@@ -404,7 +404,7 @@ function delayedOnLoadMessageWindow()
   gPhishingDetector.init();
 
   // initialize the customizeDone method on the customizeable toolbar
-  var toolbox = document.getElementById("mail-toolbox");
+  var toolbox = document.getElementById("navigation-toolbox");
   toolbox.customizeDone = function(aEvent) { MailToolboxCustomizeDone(aEvent, "CustomizeMailToolbar"); };
 
   var toolbarset = document.getElementById('customToolbars');
@@ -1216,7 +1216,7 @@ function UnloadCommandUpdateHandlers()
 
 function getMailToolbox ()
 {
-  return document.getElementById("mail-toolbox");
+  return document.getElementById("navigation-toolbox");
 }
 
 function RestoreFocusAfterHdrButton()

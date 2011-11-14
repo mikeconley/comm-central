@@ -37,11 +37,9 @@
  * Tabmail Tabs
  */
 
-.tabmail-tabs {
-  padding-top: 0px;
-  background: -moz-dialog url("chrome://messenger/skin/icons/tabmail-tabs-bkgnd.png");
-  -moz-padding-start: 0px;
-}
+.tabmail-arrowscrollbox {
+  margin-bottom: -2px;
+ }
 
 .tabmail-tabs[overflow="true"] {
   -moz-padding-start: 0px;
@@ -49,6 +47,10 @@
 
 .tabmail-tabs > .tabmail-tab:first-child > .tab-close-button {
   visibility: collapse;
+}
+
+#tabpanelcontainer:-moz-lwtheme {
+  color: inherit;
 }
 
 /**
@@ -197,16 +199,9 @@
   -moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 
-.tabs-bottom {
-  height: 4px !important;
-  margin: 0px !important;
-  background: -moz-dialog url("chrome://messenger/skin/icons/tabstrip-bottom.png") repeat !important;
-  border-top: 1px solid threedshadow;
-  border-bottom: 1px solid threedshadow;
-}
-
 tabpanels {
   -moz-appearance: none;
+  background-color: transparent;
 }
 
 .tabs-left,
@@ -227,7 +222,7 @@ tabpanels {
 /* Tab DnD indicator */
 .tab-drop-indicator {
   list-style-image: url(chrome://messenger/skin/icons/tabDragIndicator.png);
-  margin-top: -11px;
+  margin-bottom: -11px;
 }
 
 /**
@@ -316,8 +311,8 @@ tabpanels {
 }
 
 .tabmail-arrowscrollbox > .scrollbutton-up {
-  margin-top: 2px;
-  margin-bottom: 4px;
+  margin-top: 1px;
+  margin-bottom: 1px;
   padding: 0 0 3px;
   width: 18px;
   -moz-margin-start: 0px;
@@ -330,8 +325,8 @@ tabpanels {
 }
 
 .tabmail-arrowscrollbox > .scrollbutton-down-stack {
-  margin-top: 2px;
-  margin-bottom: 4px;
+  margin-top: 1px;
+  margin-bottom: 1px;
   -moz-margin-start: 2px;
 }
 
@@ -373,8 +368,8 @@ tabpanels {
  */
 
 .tabs-alltabs-button {
-  margin-top: 2px;
-  margin-bottom: 4px;
+  margin-top: 1px;
+  margin-bottom: 1px;
   width: 18px !important;
   height: 23px !important;
   -moz-padding-start: 4px !important;

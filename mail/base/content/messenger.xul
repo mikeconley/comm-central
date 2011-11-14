@@ -41,6 +41,10 @@
 
 <?xml-stylesheet href="chrome://messenger/skin/mailWindow1.css" type="text/css"?>
 <?xml-stylesheet href="chrome://gloda/content/glodacomplete.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/tabmail.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/tabmail.css" type="text/css"?>
+
+
 
 
 <?xul-overlay href="chrome://communicator/content/utilityOverlay.xul"?>
@@ -62,6 +66,8 @@
 %customizeToolbarDTD;
 <!ENTITY % textcontextDTD SYSTEM "chrome://global/locale/textcontext.dtd">
 %textcontextDTD;
+<!ENTITY % tabMailDTD SYSTEM "chrome://messenger/locale/tabmail.dtd" >
+ %tabMailDTD;
 ]>
 
 <!--
@@ -238,31 +244,84 @@
 
 <menupopup id="messageIdContext"/>
 
+<menupopup id="tabContextMenu"
+           onpopupshowing="var tabmail = document.getElementById('tabmail');
+                           return tabmail.onTabContextMenuShowing(document.popupNode);">
+  <menuitem label="&moveToNewWindow.label;"
+                accesskey="&moveToNewWindow.accesskey;"
+                id="openTabInWindow"
+                oncommand="document.getElementById('tabmail').replaceTabWithWindow(document.popupNode);"/>
+  <menuseparator />
+  <menuitem label="&closeOtherTabsCmd2.label;"
+                accesskey="&closeOtherTabsCmd2.accesskey;"
+                id="closeOtherTabs"
+                oncommand="document.getElementById('tabmail').closeOtherTabs(document.popupNode);"/>
+  <menuseparator />
+  <menu label="&recentlyClosedTabsCmd.label;"
+            accesskey="&recentlyClosedTabsCmd.accesskey;"
+            id="recentlyClosedTabs" >
+    <menupopup onpopupshowing="return InitRecentlyClosedTabsPopup(this);" />
+  </menu>
+  <menuitem label="&closeTabCmd2.label;"
+                accesskey="&closeTabCmd2.accesskey;"
+                id="closeTab"
+                oncommand="document.getElementById('tabmail').closeTab(document.popupNode);"/>
+</menupopup>
+
 <tooltip id="folderpopup" class="folderSummaryPopup"/>
 
 <tooltip id="aHTMLTooltip" onpopupshowing="return FillInHTMLTooltip(document.tooltipNode);"/>
 
-  <toolbox id="mail-toolbox" class="toolbox-top">
+<tooltip id="tabmail-tabs-tooltip" onpopupshowing="document.getElementById('tabmail').createTooltip(event);"/>
+
+  <toolbox id="navigation-toolbox" class="toolbox-top">
+
+    <toolbar id="TabsToolbar" class="toolbar-primary">
+      <tabs flex="1"
+            id="tabcontainer"
+            align="end"
+            setfocus="false"
+            onclick="document.getElementById('tabmail').onTabClick(event);"
+            class="tabmail-tabs"
+            tooltip="tabmail-tabs-tooltip"
+            alltabsbutton="alltabs-button"
+            tabtoolbar="tabbar-toolbar">
+            <tab selected="true" validate="never" type="folder"
+                 maxwidth="250" width="0" minwidth="100" flex="100"
+                 class="tabmail-tab" crop="end"/>
+      </tabs>
+      <!-- Use of this element for extensions is deprecated! Current
+           extensions should add to #mail-toolbox and add a toolbar item to
+           #tabbar-toolbar below. -->
+      <hbox id="tabmail-buttons"/>
+
+      <toolbar id="tabbar-toolbar" toolboxid="mail-toolbox"
+               context="toolbar-context-menu"
+               customizable="true"
+               mode="icons" defaultmode="icons" lockmode="true"
+               iconsize="small" defaulticonsize="small" lockiconsize="true"
+               defaultset="qfb-show-filter-bar"/>
+
+      <toolbarbutton class="tabs-alltabs-button"
+                     id="alltabs-button"
+                     type="menu"
+                     tooltiptext="&listAllTabs.label;">
+        <menupopup class="tabs-alltabs-popup"
+                   id="alltabs-popup" position="after_end"
+                   tabcontainer="tabcontainer"/>
+      </toolbarbutton>
+
+    </toolbar>
+
   </toolbox>
+
   <!-- XXX This extension point (tabmail-container) is only temporary!
        Horizontal space shouldn't be wasted if it isn't absolutely critical.
        A mechanism for adding sidebar panes will be added in bug 476154. -->
   <hbox id="tabmail-container" flex="1">
-    <tabmail id="tabmail" flex="1" panelcontainer="tabpanelcontainer">
-      <hbox>
-        <!-- Use of this element for extensions is deprecated! Current
-             extensions should add to #mail-toolbox and add a toolbar item to
-             #tabbar-toolbar below. -->
-        <hbox id="tabmail-buttons"/>
-
-        <toolbar id="tabbar-toolbar" toolboxid="mail-toolbox"
-                 context="toolbar-context-menu"
-                 customizable="true"
-                 mode="icons" defaultmode="icons" lockmode="true"
-                 iconsize="small" defaulticonsize="small" lockiconsize="true"
-                 defaultset="qfb-show-filter-bar"/>
-      </hbox>
+    <tabmail id="tabmail" flex="1" panelcontainer="tabpanelcontainer" tabcontainer="tabcontainer">
       <tabpanels id="tabpanelcontainer" flex="1" class="plain" selectedIndex="0">
+
         <!-- mailContent is the container used for the "wide" layout. Normally,
              all it contains is the "messengerBox" box.  However, in "wide" mode
              the message pane and its splitter transplant themselves into the box
@@ -270,6 +329,276 @@
              the folder pane next to the thread view, with the message pane/reader
              beneath both of them. -->
         <box id="mailContent" orient="vertical" flex="1">
+          <toolbox id="mail-toolbox"
+                   mode="full"
+                   defaultmode="full"
+#ifdef XP_MACOSX
+                   iconsize="small"
+                   defaulticonsize="small"
+#endif
+                   labelalign="end"
+                   defaultlabelalign="end">
+            <toolbarpalette id="MailToolbarPalette">
+              <toolbarbutton id="button-getmsg"
+                             type="menu-button"
+                             class="toolbarbutton-1"
+                             label="&getMsgButton.label;"
+                             tooltiptext="&getMsgButton.tooltip;"
+                             oncommand="MsgGetMessagesForAccount(event.target._folder)"
+                             observes="button_getNewMessages">
+                <menupopup id="button-getMsgPopup"
+                           onpopupshowing="getMsgToolbarMenu_init();"
+                           type="folder"
+                           expandFolders="false"
+                           mode="getMail">
+                  <menuitem id="button-getAllNewMsg"
+                            label="&getAllNewMsgCmd.label;"
+                            accesskey="&getAllNewMsgCmd.accesskey;"
+                            command="cmd_getMsgsForAuthAccounts"/>
+                  <menuseparator id="button-getAllNewMsgSeparator"/>
+                </menupopup>
+              </toolbarbutton>
+              <toolbarbutton id="button-newmsg"
+                             class="toolbarbutton-1"
+                             label="&newMsgButton.label;"
+                             tooltiptext="&newMsgButton.tooltip;"
+                             oncommand="MsgNewMessage(event)"/>
+              <toolbarbutton id="button-reply"
+                             class="toolbarbutton-1"
+                             label="&replyButton.label;"
+                             tooltiptext="&replyButton.tooltip;"
+                             observes="button_reply"
+                             oncommand="MsgReplyMessage(event)"/>
+              <toolbarbutton id="button-replyall"
+                             class="toolbarbutton-1"
+                             label="&replyAllButton.label;"
+                             tooltiptext="&replyAllButton.tooltip;"
+                             observes="button_replyall"
+                             oncommand="MsgReplyToAllMessage(event)"/>
+              <toolbarbutton id="button-replylist"
+                             class="toolbarbutton-1"
+                             label="&replyListButton.label;"
+                             tooltiptext="&replyListButton.tooltip;"
+                             observes="button_replylist"
+                             oncommand="MsgReplyToListMessage(event)"/>
+              <toolbarbutton id="button-forward"
+                             class="toolbarbutton-1"
+                             label="&forwardButton.label;"
+                             tooltiptext="&forwardButton.tooltip;"
+                             observes="button_forward"
+                             oncommand="MsgForwardMessage(event)"/>
+              <toolbarbutton id="button-file"
+                             type="menu"
+                             class="toolbarbutton-1"
+                             label="&fileButton.label;"
+                             observes="button_file"
+                             oncommand="MsgMoveMessage(event.target._folder)">
+                <menupopup id="button-filePopup"
+                           type="folder"
+                           mode="filing"
+                           showRecent="true"
+                           showFileHereLabel="true"
+                           fileHereLabel="&fileHereMenu.label;"
+                           fileHereAccessKey="&fileHereMenu.accesskey;"
+                           recentLabel="&moveCopyMsgRecentMenu.label;"
+                           recentAccessKey="&moveCopyMsgRecentMenu.accesskey;"/>
+              </toolbarbutton>
+              <toolbarbutton id="button-archive"
+                             class="toolbarbutton-1"
+                             label="&archiveButton.label;"
+                             tooltiptext="&archiveButton.tooltip;"
+                             observes="button_archive"
+                             oncommand="MsgArchiveSelectedMessages(event)"/>
+              <toolbarbutton id="button-goback"
+                             class="toolbarbutton-1"
+                             type="menu-button"
+                             label="&backButton1.label;"
+                             oncommand="goDoCommand('cmd_goBack')"
+                             tooltiptext="&goBackButton.tooltip;"
+                             observes="button_goBack">
+                <menupopup id="button-goBackPopup" onpopupshowing="backToolbarMenu_init(this)">
+                  <menuitem id="button-goBack" label="&goBackCmd.label;" command="cmd_goBack"/>
+                  <menuseparator id="button-goBackSeparator"/>
+                </menupopup>
+              </toolbarbutton>
+              <toolbarbutton id="button-goforward"
+                             class="toolbarbutton-1"
+                             type="menu-button"
+                             label="&goForwardButton1.label;"
+                             oncommand="goDoCommand('cmd_goForward')"
+                             tooltiptext="&goForwardButton.tooltip;"
+                             observes="button_goForward">
+                <menupopup id="button-goForwardPopup" onpopupshowing="forwardToolbarMenu_init(this)">
+                  <menuitem id="button-goForward"
+                            label="&goForwardCmd.label;"
+                            command="cmd_goForward"/>
+                  <menuseparator id="button-goForwardSeparator"/>
+                </menupopup>
+              </toolbarbutton>
+              <toolbarbutton id="button-previous"
+                             class="toolbarbutton-1"
+                             label="&previousButton.label;"
+                             oncommand="goDoCommand('button_previous')"
+                             tooltiptext="&previousButton.tooltip;"
+                             observes="button_previous"/>
+              <toolbarbutton id="button-next"
+                             class="toolbarbutton-1"
+                             label="&nextButton.label;"
+                             oncommand="goDoCommand('button_next')"
+                             tooltiptext="&nextButton.tooltip;"
+                             observes="button_next"/>
+              <toolbaritem id="button-junk" title="&junkItem.title;">
+                <deck id="junk-deck" observes="button_junk">
+                  <toolbarbutton id="button-isJunk"
+                                 class="toolbarbutton-1 junk-button"
+                                 label="&junkButton.label;"
+                                 tooltiptext="&junkButton.tooltip;"
+                                 observes="button_junk"
+                                 oncommand="goDoCommand('button_junk')"/>
+                  <toolbarbutton id="button-notJunk"
+                                 class="toolbarbutton-1 junk-button"
+                                 label="&notJunkButton.label;"
+                                 tooltiptext="&notJunkButton.tooltip;"
+                                 observes="button_junk"
+                                 oncommand="goDoCommand('button_junk')"/>
+                </deck>
+              </toolbaritem>
+              <toolbaritem id="button-delete" title="&deleteItem.title;">
+                <deck id="delete-deck" observes="button_delete">
+                   <toolbarbutton id="button-mark-deleted"
+                                  class="toolbarbutton-1 delete-button"
+                                  label="&deleteButton.label;"
+                                  tooltiptext="&deleteButton.tooltip;"
+                                  observes="button_delete"
+                                  oncommand="goDoCommand(event.shiftKey ? 'cmd_shiftDelete' : 'cmd_delete')"/>
+                   <toolbarbutton id="button-mark-undelete"
+                                  class="toolbarbutton-1 delete-button"
+                                  label="&undeleteButton.label;"
+                                  tooltiptext="&undeleteButton.tooltip;"
+                                  observes="button_delete"
+                                  oncommand="goDoCommand('cmd_delete')"/>
+                </deck>
+              </toolbaritem>
+#ifdef XP_MACOSX
+              <toolbarbutton id="button-print"
+                             class="toolbarbutton-1"
+                             label="&printButton.label;"
+                             observes="button_print"
+                             oncommand="goDoCommand('cmd_print')"
+                             tooltiptext="&printButton.tooltip;"/>
+#else
+              <toolbarbutton id="button-print"
+                             class="toolbarbutton-1"
+                             label="&printButton.label;"
+                             observes="button_print"
+                             oncommand="goDoCommand('cmd_print')"
+                             tooltiptext="&printButton.tooltip;"
+                             type="menu-button">
+                <menupopup id="printMenu" onpopupshowing="goUpdateCommand('cmd_printpreview');">
+                  <menuitem id="button-printMenu"
+                            label="&printCmd.label;"
+                            accesskey="&printCmd.accesskey;"
+                            default="true"/>
+                  <menuitem id="button-printPreviewMenu"
+                            label="&printPreviewCmd.label;"
+                            accesskey="&printPreviewCmd.accesskey;"
+                            observes="cmd_printpreview"
+                            command="cmd_printpreview"/>
+                </menupopup>
+              </toolbarbutton>
+#endif
+              <toolbarbutton id="button-mark"
+                             type="menu-button"
+                             class="toolbarbutton-1"
+                             label="&markButton.label;"
+                             oncommand="goDoCommand('button_mark')"
+                             observes="button_mark"
+                             tooltiptext="&markButton.tooltip;">
+                <menupopup id="button-markPopup" onpopupshowing="InitMessageMark()">
+                  <menuitem id="markReadToolbarItem"
+                            label="&markAsReadCmd.label;"
+                            accesskey="&markAsReadCmd.accesskey;"
+                            command="cmd_markAsRead" />
+                  <menuitem id="markUnreadToolbarItem"
+                            label="&markAsUnreadCmd.label;"
+                            accesskey="&markAsUnreadCmd.accesskey;"
+                            command="cmd_markAsUnread" />
+                  <menuitem id="button-markThreadAsRead"
+                            label="&markThreadAsReadCmd.label;"
+                            key="key_markThreadAsRead"
+                            accesskey="&markThreadAsReadCmd.accesskey;"
+                            command="cmd_markThreadAsRead"/>
+                  <menuitem id="button-markReadByDate"
+                            label="&markReadByDateCmd.label;"
+                            key="key_markReadByDate"
+                            accesskey="&markReadByDateCmd.accesskey;"
+                            command="cmd_markReadByDate"/>
+                  <menuitem id="button-markAllRead"
+                            label="&markAllReadCmd.label;"
+                            key="key_markAllRead"
+                            accesskey="&markAllReadCmd.accesskey;"
+                            command="cmd_markAllRead"/>
+                  <menuseparator id="button-markAllReadSeparator"/>
+                  <menuitem id="markFlaggedToolbarItem"
+                            type="checkbox"
+                            label="&markStarredCmd.label;"
+                            accesskey="&markStarredCmd.accesskey;"
+                            key="key_toggleFlagged"
+                            command="cmd_markAsFlagged"/>
+                </menupopup>
+              </toolbarbutton>
+              <toolbarbutton id="button-tag"
+                             type="menu"
+                             class="toolbarbutton-1"
+                             label="&tagButton.label;"
+                             tooltiptext="&tagButton.tooltip;"
+                             command="cmd_tag">
+                <menupopup id="button-tagpopup" onpopupshowing="InitMessageTags(this)">
+                  <menuitem id="addNewTag"
+                            label="&addNewTag.label;"
+                            accesskey="&addNewTag.accesskey;"
+                            oncommand="AddTag();"/>
+                  <menuseparator id="button-tagpopup-sep-afterTagAddNew"/>
+                  <menuitem id="button-tagRemoveAll" oncommand="RemoveAllMessageTags();"/>
+                  <menuseparator id="button-afterTagRemoveAllSeparator"/>
+                </menupopup>
+              </toolbarbutton>
+              <toolbarbutton id="button-address"
+                             class="toolbarbutton-1"
+                             label="&addressBookButton.label;"
+                             oncommand="toAddressBook();"
+                             tooltiptext="&addressBookButton.tooltip;"/>
+              <toolbaritem id="throbber-box" title="&throbberItem.title;" align="center" pack="center"
+                           mousethrough="always">
+                 <image/>
+              </toolbaritem>
+              <toolbarbutton id="button-stop"
+                             class="toolbarbutton-1"
+                             label="&stopButton.label;"
+                             tooltiptext="&stopButton.tooltip;"
+                             command="cmd_stop"/>
+            </toolbarpalette>
+
+            <!-- If changes are made to the default set of toolbar buttons, you may need to rev the id
+                 of mail-bar in order to force the new default items to show up for users who customized their toolbar
+                 in earlier versions. Bumping the id means users will have to re-customize their toolbar!
+            -->
+            <toolbar id="mail-bar3" class="inline-toolbar chromeclass-toolbar"
+                     toolbarname="&showMessengerToolbarCmd.label;"
+                     accesskey="&showMessengerToolbarCmd.accesskey;"
+                     fullscreentoolbar="true" mode="full"
+                     customizable="true"
+                     context="toolbar-context-menu"
+#ifdef XP_MACOSX
+                     iconsize="small"
+                     defaultset="button-getmsg,button-newmsg,button-address,spacer,button-tag,spring,gloda-search,throbber-box">
+#else
+                     defaultset="button-getmsg,button-newmsg,button-address,separator,button-tag,spring,gloda-search">
+#endif
+            </toolbar>
+            <toolbarset id="customToolbars" context="toolbar-context-menu"/>
+         </toolbox>
+
           <box id="messengerBox" orient="horizontal" flex="1" minheight="100" height="100" persist="height">
             <vbox id="folderPaneBox" minwidth="125" width="200" persist="width">
               <label id="folderColumnLabel" hidden="true" value="&folderColumn.label;"/>

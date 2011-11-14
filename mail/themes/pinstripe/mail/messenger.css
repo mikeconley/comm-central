@@ -66,6 +66,17 @@ toolbar[printpreview="true"] {
   min-height: 10px;
 }
 
+/* ::::: Mail Toolbars and Menubars ::::: */
+
+#mail-bar3:-moz-lwtheme {
+  background-color: rgba(255, 255, 255, .3) !important;
+  background-image: -moz-linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0)) !important;
+}
+
+#mail-bar3:-moz-lwtheme-brighttext {
+  color: rgb(255, 255, 255)	;
+}
+
 /* :::::: throbber :::::::::: */
 
 #throbber-box {

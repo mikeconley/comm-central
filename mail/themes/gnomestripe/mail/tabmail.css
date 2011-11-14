@@ -38,6 +38,14 @@
  * Tabmail Tabs
  */
 
+#TabsToolbar {
+  padding: 0;
+}
+
+#tabpanelcontainer:-moz-lwtheme {
+  color: inherit;
+}
+
 .tabmail-tabs:not(:-moz-lwtheme) {
   -moz-appearance: menubar;
 }
@@ -56,6 +64,7 @@
 
 tabpanels {
   -moz-appearance: none;
+  background-color: transparent;
 }
 
 /**
@@ -150,10 +159,6 @@ tabpanels {
   list-style-image: url(moz-icon://stock/gtk-find?size=menu);
 }
 
-.tabs-bottom {
-  border-bottom: 1px solid threedshadow;
-}
-
 .tabmail-tab > .tab-image-middle > .tab-text {
   /* tabmail-tab focus ring */
   border: 1px dotted transparent;
@@ -167,7 +172,7 @@ tabpanels {
 /* Tab drag and drop */
 .tab-drop-indicator {
   list-style-image: url(chrome://messenger/skin/icons/tabDragIndicator.png);
-  margin-top: -11px;
+  margin-bottom: -11px;
 }
 
 /* In-tab close button */
