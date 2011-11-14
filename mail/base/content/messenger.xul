@@ -276,7 +276,7 @@
 
   <toolbox id="navigation-toolbox" class="toolbox-top" labelalign="end">
 
-    <toolbar id="TabsToolbar" class="toolbar-primary">
+    <toolbar id="tabs-toolbar" class="toolbar-primary">
       <tabs flex="1"
             id="tabcontainer"
             align="end"

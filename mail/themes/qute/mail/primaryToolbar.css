@@ -46,12 +46,12 @@
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-#navigation-toolbox > #TabsToolbar:not(:-moz-lwtheme) {
+#navigation-toolbox > #tabs-toolbar:not(:-moz-lwtheme) {
   -moz-appearance: none;
   border-bottom: 1px solid ThreeDShadow;
 }
 
-#TabsToolbar {
+#tabs-toolbar {
   -moz-box-ordinal-group: 20;
 }
 

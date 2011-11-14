@@ -68,7 +68,7 @@
                     rgba(255, 255, 255, 0));
 }
 
-#navigation-toolbox > #TabsToolbar:not(:-moz-lwtheme) {
+#navigation-toolbox > #tabs-toolbar:not(:-moz-lwtheme) {
   border-bottom: 1px solid ThreeDDarkShadow;
 }
 
@@ -280,7 +280,7 @@ toolbox[labelalign="end"] > toolbar[mode="full"] .toolbarbutton-1[type="menu"] {
   }
 
   #navigation-toolbox:not(:-moz-lwtheme),
-  #TabsToolbar {
+  #tabs-toolbar {
     background: transparent !important;
     border-style: none;
   }
@@ -326,7 +326,7 @@ toolbox[labelalign="end"] > toolbar[mode="full"] .toolbarbutton-1[type="menu"] {
     -moz-appearance: -moz-win-browsertabbar-toolbox;
   }
 
-  #TabsToolbar {
+  #tabs-toolbar {
     -moz-box-ordinal-group: 20;
   }
 
