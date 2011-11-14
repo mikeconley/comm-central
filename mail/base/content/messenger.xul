@@ -274,7 +274,7 @@
 
 <tooltip id="tabmail-tabs-tooltip" onpopupshowing="document.getElementById('tabmail').createTooltip(event);"/>
 
-  <toolbox id="navigation-toolbox" class="toolbox-top">
+  <toolbox id="navigation-toolbox" class="toolbox-top" labelalign="end">
 
     <toolbar id="TabsToolbar" class="toolbar-primary">
       <tabs flex="1"
