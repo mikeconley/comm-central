@@ -367,12 +367,7 @@ toolbar[iconsize="small"] .hdrTrashButton {
 
 .inline-toolbar toolbarpaletteitem toolbarseparator,
 .inline-toolbar toolbarseparator {
-  height: 30px;
   -moz-margin-start: 1px; /* make it symetrical */
-}
-
-.inline-toolbar toolbarspacer {
-  height: 24px;
 }
 
 .inline-toolbar {
