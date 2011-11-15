@@ -51,14 +51,6 @@
   border-bottom: 1px solid ThreeDShadow;
 }
 
-#tabs-toolbar {
-  -moz-box-ordinal-group: 20;
-}
-
-#mail-toolbar-menubar2 {
-  -moz-box-ordinal-group: 10;
-}
-
 #mail-bar3 {
   padding: 1px 0;
 }

@@ -290,7 +290,7 @@ function onViewToolbarsPopupShowing(aEvent, toolboxIds)
 
   var firstMenuItem = popup.firstChild;
 
-  for (let toolboxId in Iterator(toolboxIds)) {
+  for (let [index, toolboxId] in Iterator(toolboxIds)) {
     var toolbox = document.getElementById(toolboxId);
 
     for (var i = 0; i < toolbox.childNodes.length; ++i) {

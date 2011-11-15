@@ -44,19 +44,7 @@ menulist > menupopup > menu > .menu-iconic-left {
   display: -moz-box;
 }
 
-/* ::::: Mail Toolbars and Menubars ::::: */
-
-#mail-toolbar-menubar2:not(:-moz-lwtheme) {
-  -moz-appearance: window;
-}
-
-#mail-toolbar-menubar2:-moz-lwtheme {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-#mail-toolbar-menubar2 #mail-menubar > menu:not([open]):not(:-moz-lwtheme) {
-  color: WindowText;
-}
+/* ::::: Mail Toolbar ::::: */
 
 #mail-bar3 {
   -moz-appearance: none;
